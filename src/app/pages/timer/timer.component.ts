@@ -1,0 +1,178 @@
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { TimerService } from '../../services/timer.service';
+import { TimeEntryService } from '../../services/time-entry.service';
+import { ProjectService } from '../../services/project.service';
+import { DurationPipe } from '../../shared/duration.pipe';
+import { TASK_CATEGORIES } from '../../models/models';
+
+@Component({
+  selector: 'app-timer',
+  standalone: true,
+  imports: [FormsModule, DurationPipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <div class="p-6 max-w-2xl mx-auto space-y-6">
+      <h1 class="text-2xl font-bold text-slate-100">Timer</h1>
+
+      <!-- Timer Display -->
+      <div class="bg-slate-800 rounded-2xl border border-slate-700 p-8 text-center space-y-6">
+        <div class="text-7xl font-mono font-bold tracking-tight"
+          [class]="isRunning() ? 'text-emerald-400' : 'text-slate-300'">
+          {{ elapsed() | duration }}
+        </div>
+
+        @if (runningEntry()) {
+          <div class="text-sm text-slate-400">
+            <span class="font-medium text-slate-200">{{ getProjectName(runningEntry()!.projectId) }}</span>
+            <span class="mx-2">·</span>
+            <span>{{ getTaskName(runningEntry()!.taskId) }}</span>
+          </div>
+        }
+
+        <!-- Start/Stop Button -->
+        @if (!isRunning()) {
+          <button (click)="startTimer()"
+            [disabled]="!selectedProjectId() || !selectedTaskId()"
+            class="px-10 py-4 rounded-full text-lg font-semibold bg-indigo-600 hover:bg-indigo-500 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-indigo-900/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
+            ▶ Start
+          </button>
+        } @else {
+          <button (click)="stopTimer()"
+            class="px-10 py-4 rounded-full text-lg font-semibold bg-rose-600 hover:bg-rose-500 text-white transition-all shadow-lg shadow-rose-900/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-400">
+            ⏹ Stop
+          </button>
+        }
+      </div>
+
+      <!-- Project/Task Selector -->
+      @if (!isRunning()) {
+        <div class="bg-slate-800 rounded-xl border border-slate-700 p-5 space-y-4">
+          <h2 class="font-semibold text-slate-100">Projekt & Aufgabe auswählen</h2>
+
+          <!-- Project -->
+          <div class="space-y-1.5">
+            <label for="project-select" class="text-sm font-medium text-slate-300">Projekt</label>
+            <select id="project-select" [(ngModel)]="selectedProjectId" (ngModelChange)="onProjectChange()"
+              class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="">– Projekt wählen –</option>
+              @for (p of projects(); track p.id) {
+                <option [value]="p.id">{{ p.name }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Task -->
+          <div class="space-y-1.5">
+            <label for="task-select" class="text-sm font-medium text-slate-300">Aufgabe</label>
+            <select id="task-select" [(ngModel)]="selectedTaskId"
+              [disabled]="!selectedProjectId()"
+              class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50">
+              <option value="">– Aufgabe wählen –</option>
+              @for (t of availableTasks(); track t.id) {
+                <option [value]="t.id">{{ t.name }}</option>
+              }
+            </select>
+          </div>
+        </div>
+      }
+
+      <!-- Today's entries -->
+      <div class="bg-slate-800 rounded-xl border border-slate-700">
+        <div class="px-5 py-4 border-b border-slate-700 flex items-center justify-between">
+          <h2 class="font-semibold text-slate-100">Heute</h2>
+          <span class="text-sm font-mono text-slate-400">{{ todayTotal() | duration }}</span>
+        </div>
+        <ul class="divide-y divide-slate-700/50" role="list">
+          @for (entry of todayEntries(); track entry.id) {
+            <li class="px-5 py-3 flex items-center gap-3">
+              <div class="w-2 h-2 rounded-full shrink-0" [style.background-color]="getProjectColor(entry.projectId)"></div>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm font-medium text-slate-200 truncate">{{ getProjectName(entry.projectId) }} · {{ getTaskName(entry.taskId) }}</div>
+                @if (entry.note) {
+                  <div class="text-xs text-slate-400 truncate">{{ entry.note }}</div>
+                }
+              </div>
+              <div class="text-right shrink-0">
+                <div class="text-sm font-mono text-slate-300">{{ entry.durationSeconds | duration }}</div>
+                <div class="text-xs text-slate-500">{{ formatTime(entry.startTime) }} – {{ formatTime(entry.endTime!) }}</div>
+              </div>
+            </li>
+          }
+          @empty {
+            <li class="px-5 py-6 text-center text-slate-500 text-sm">Noch keine Einträge heute</li>
+          }
+        </ul>
+      </div>
+    </div>
+  `,
+})
+export class TimerComponent implements OnInit {
+  private readonly timerService = inject(TimerService);
+  private readonly timeEntryService = inject(TimeEntryService);
+  private readonly projectService = inject(ProjectService);
+  private readonly route = inject(ActivatedRoute);
+
+  readonly isRunning = this.timerService.isRunning;
+  readonly elapsed = this.timerService.elapsed;
+  readonly runningEntry = this.timeEntryService.runningEntry;
+
+  selectedProjectId = signal('');
+  selectedTaskId = signal('');
+
+  readonly projects = this.projectService.activeProjects;
+
+  readonly availableTasks = computed(() => {
+    const pid = this.selectedProjectId();
+    if (!pid) return [];
+    return this.projectService.tasksForProject(pid);
+  });
+
+  readonly todayEntries = computed(() => {
+    return [...this.timeEntryService.entriesForDay(new Date())]
+      .filter((e) => e.endTime)
+      .sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime());
+  });
+
+  readonly todayTotal = computed(() =>
+    this.todayEntries().reduce((s, e) => s + e.durationSeconds, 0)
+  );
+
+  ngOnInit(): void {
+    const params = this.route.snapshot.queryParams;
+    if (params['projectId']) this.selectedProjectId.set(params['projectId']);
+    if (params['taskId']) this.selectedTaskId.set(params['taskId']);
+  }
+
+  onProjectChange(): void {
+    this.selectedTaskId.set('');
+  }
+
+  async startTimer(): Promise<void> {
+    const pid = this.selectedProjectId();
+    const tid = this.selectedTaskId();
+    if (!pid || !tid) return;
+    await this.timerService.start(pid, tid);
+  }
+
+  async stopTimer(): Promise<void> {
+    await this.timerService.stop();
+  }
+
+  getProjectName(id: string): string {
+    return this.projectService.getProject(id)?.name ?? '–';
+  }
+
+  getProjectColor(id: string): string {
+    return this.projectService.getProject(id)?.color ?? '#6b7280';
+  }
+
+  getTaskName(id: string): string {
+    return this.projectService.getTask(id)?.name ?? '–';
+  }
+
+  formatTime(iso: string): string {
+    return new Date(iso).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  }
+}

@@ -1,6 +1,56 @@
-# TrackHours
+# Track Hours
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.0.
+Moderne Desktop-Zeiterfassungsanwendung für Projekte und Aufgaben, gebaut mit **Angular 21** + **Electron**.
+
+## Features
+
+- **Projekte & Aufgaben** – Anlegen, Bearbeiten, Löschen mit Farbcodierung und Kategorien
+- **Start/Stopp-Timer** – Echtzeit-Zeiterfassung mit Systembenachrichtigungen
+- **Manuelle Einträge** – Nachträgliches Erfassen mit Start, Ende, Notiz
+- **Tages-/Wochen-/Monatsansicht** – Filter nach Projekt, Kategorie, Suchbegriff
+- **Berichte** – Aufschlüsselung nach Projekt und Kategorie mit Balkendiagrammen
+- **Export** – CSV (Excel-kompatibel mit UTF-8 BOM) und PDF
+- **Erinnerungen** – Konfigurierbare Desktop-Benachrichtigungen
+- **Offline-first** – Alle Daten lokal (JSON-Dateien via Electron, localStorage im Browser)
+
+## Schnellstart
+
+### Entwicklung (Angular Dev Server + Electron)
+```bash
+npm run electron:dev
+```
+
+### Nur Angular Dev Server (Browser)
+```bash
+npm start
+```
+
+### Produktion bauen + Electron packagen
+```bash
+npm run electron:build
+```
+
+## Datenspeicherung
+
+Im Electron-Modus werden die Daten als JSON-Dateien im User-Data-Verzeichnis gespeichert:
+- Windows: `%APPDATA%\track-hours\track-hours-data\`
+- macOS: `~/Library/Application Support/track-hours/track-hours-data/`
+- Linux: `~/.config/track-hours/track-hours-data/`
+
+## Architektur
+
+```
+src/app/
+  models/           # Datenmodelle (Project, Task, TimeEntry, AppSettings)
+  services/         # StorageService, ProjectService, TimeEntryService, TimerService, ExportService
+  shared/           # DurationPipe
+  components/       # Sidebar
+  pages/            # Dashboard, Timer, Projects, Entries, Reports, Settings
+electron/
+  main.js           # Electron Hauptprozess
+  preload.js        # Context Bridge (IPC)
+```
+
 
 ## Development server
 
