@@ -126,7 +126,7 @@ type ViewMode = 'day' | 'week' | 'month';
             </thead>
             <tbody class="divide-y divide-slate-700/50">
               @for (entry of filteredEntries(); track entry.id) {
-                <tr class="hover:bg-slate-700/30 transition-colors group">
+                <tr class="hover:bg-slate-700/30 transition-colors">
                   <td class="px-4 py-3 text-slate-300 whitespace-nowrap">{{ formatDate(entry.startTime) }}</td>
                   <td class="px-4 py-3 text-slate-400 whitespace-nowrap font-mono text-xs">
                     {{ formatTime(entry.startTime) }} – {{ formatTime(entry.endTime!) }}
@@ -148,7 +148,7 @@ type ViewMode = 'day' | 'week' | 'month';
                   </td>
                   <td class="px-4 py-3 text-slate-500 truncate max-w-[150px]">{{ entry.note ?? '' }}</td>
                   <td class="px-4 py-3 text-right">
-                    <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div class="flex items-center justify-end gap-1">
                       <button (click)="openEditDialog(entry)"
                         class="p-1.5 rounded text-slate-400 hover:text-slate-200 hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400"
                         [attr.aria-label]="'COMMON.EDIT' | translate">
