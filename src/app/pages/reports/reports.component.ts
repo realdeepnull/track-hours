@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { TimeEntryService } from '../../services/time-entry.service';
 import { ProjectService } from '../../services/project.service';
 import { ExportService } from '../../services/export.service';
@@ -11,20 +12,20 @@ import { de } from 'date-fns/locale';
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [FormsModule, DurationPipe],
+  imports: [FormsModule, DurationPipe, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="p-6 max-w-5xl mx-auto space-y-6">
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-slate-100">Berichte</h1>
+        <h1 class="text-2xl font-bold text-slate-100">{{ 'REPORTS.TITLE' | translate }}</h1>
         <div class="flex gap-2">
           <button (click)="exportCSV()"
             class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400">
-            Export CSV
+            {{ 'REPORTS.EXPORT_CSV' | translate }}
           </button>
           <button (click)="exportPDF()"
             class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
-            Export PDF
+            {{ 'REPORTS.EXPORT_PDF' | translate }}
           </button>
         </div>
       </div>
@@ -32,30 +33,30 @@ import { de } from 'date-fns/locale';
       <!-- Date Range Picker -->
       <div class="bg-slate-800 rounded-xl border border-slate-700 p-4 flex flex-wrap gap-4 items-end">
         <div class="space-y-1.5">
-          <label class="text-xs text-slate-400 font-medium">Von</label>
+          <label class="text-xs text-slate-400 font-medium">{{ 'REPORTS.DATE_FROM' | translate }}</label>
           <input type="date" [(ngModel)]="fromDate"
             class="bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
         </div>
         <div class="space-y-1.5">
-          <label class="text-xs text-slate-400 font-medium">Bis</label>
+          <label class="text-xs text-slate-400 font-medium">{{ 'REPORTS.DATE_TO' | translate }}</label>
           <input type="date" [(ngModel)]="toDate"
             class="bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
         </div>
         <div class="space-y-1.5">
-          <label class="text-xs text-slate-400 font-medium">Projekt</label>
+          <label class="text-xs text-slate-400 font-medium">{{ 'REPORTS.FILTER_PROJECT' | translate }}</label>
           <select [(ngModel)]="filterProjectId"
             class="bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <option value="">Alle</option>
+            <option value="">{{ 'REPORTS.FILTER_ALL' | translate }}</option>
             @for (p of projects(); track p.id) {
               <option [value]="p.id">{{ p.name }}</option>
             }
           </select>
         </div>
         <div class="flex gap-2 ml-auto">
-          @for (preset of presets; track preset.label) {
+          @for (preset of presets; track preset.labelKey) {
             <button (click)="applyPreset(preset)"
               class="px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-xs text-slate-300 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400">
-              {{ preset.label }}
+              {{ preset.labelKey | translate }}
             </button>
           }
         </div>
@@ -63,9 +64,9 @@ import { de } from 'date-fns/locale';
 
       <!-- Summary Stats -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        @for (stat of summaryStats(); track stat.label) {
+        @for (stat of summaryStats(); track stat.labelKey) {
           <div class="bg-slate-800 rounded-xl border border-slate-700 p-4 text-center">
-            <div class="text-xs text-slate-400 mb-1">{{ stat.label }}</div>
+            <div class="text-xs text-slate-400 mb-1">{{ stat.labelKey | translate }}</div>
             <div class="text-xl font-bold text-slate-100 font-mono">{{ stat.value }}</div>
           </div>
         }
@@ -75,7 +76,7 @@ import { de } from 'date-fns/locale';
         <!-- Project Breakdown -->
         <div class="bg-slate-800 rounded-xl border border-slate-700">
           <div class="px-5 py-4 border-b border-slate-700">
-            <h2 class="font-semibold text-slate-100">Nach Projekt</h2>
+            <h2 class="font-semibold text-slate-100">{{ 'REPORTS.BY_PROJECT' | translate }}</h2>
           </div>
           <ul class="p-4 space-y-3" role="list">
             @for (p of projectBreakdown(); track p.id) {
@@ -86,7 +87,7 @@ import { de } from 'date-fns/locale';
                     <span class="text-slate-200">{{ p.name }}</span>
                   </div>
                   <div class="flex items-center gap-3">
-                    <span class="text-xs text-slate-400">{{ p.count }} Einträge</span>
+                    <span class="text-xs text-slate-400">{{ p.count }} {{ 'REPORTS.ENTRIES_COUNT' | translate }}</span>
                     <span class="font-mono text-slate-200">{{ p.totalSeconds | duration }}</span>
                     <span class="text-xs text-slate-500 w-10 text-right">{{ p.percentage }}%</span>
                   </div>
@@ -97,7 +98,7 @@ import { de } from 'date-fns/locale';
               </li>
             }
             @empty {
-              <li class="text-center text-slate-500 text-sm py-4">Keine Daten</li>
+              <li class="text-center text-slate-500 text-sm py-4">{{ 'COMMON.NO_DATA' | translate }}</li>
             }
           </ul>
         </div>
@@ -105,7 +106,7 @@ import { de } from 'date-fns/locale';
         <!-- Category Breakdown -->
         <div class="bg-slate-800 rounded-xl border border-slate-700">
           <div class="px-5 py-4 border-b border-slate-700">
-            <h2 class="font-semibold text-slate-100">Nach Kategorie</h2>
+            <h2 class="font-semibold text-slate-100">{{ 'REPORTS.BY_CATEGORY' | translate }}</h2>
           </div>
           <ul class="p-4 space-y-3" role="list">
             @for (c of categoryBreakdown(); track c.value) {
@@ -126,7 +127,7 @@ import { de } from 'date-fns/locale';
               </li>
             }
             @empty {
-              <li class="text-center text-slate-500 text-sm py-4">Keine Daten</li>
+              <li class="text-center text-slate-500 text-sm py-4">{{ 'COMMON.NO_DATA' | translate }}</li>
             }
           </ul>
         </div>
@@ -147,12 +148,12 @@ export class ReportsComponent {
   filterProjectId = '';
 
   readonly presets = [
-    { label: 'Dieser Monat', from: () => startOfMonth(new Date()), to: () => endOfMonth(new Date()) },
-    { label: 'Letzter Monat', from: () => startOfMonth(subMonths(new Date(), 1)), to: () => endOfMonth(subMonths(new Date(), 1)) },
-    { label: 'Letzte 3M', from: () => startOfMonth(subMonths(new Date(), 2)), to: () => endOfMonth(new Date()) },
+    { labelKey: 'REPORTS.PRESET_THIS_MONTH', from: () => startOfMonth(new Date()), to: () => endOfMonth(new Date()) },
+    { labelKey: 'REPORTS.PRESET_LAST_MONTH', from: () => startOfMonth(subMonths(new Date(), 1)), to: () => endOfMonth(subMonths(new Date(), 1)) },
+    { labelKey: 'REPORTS.PRESET_LAST_3M', from: () => startOfMonth(subMonths(new Date(), 2)), to: () => endOfMonth(new Date()) },
   ];
 
-  applyPreset(preset: { from: () => Date; to: () => Date }): void {
+  applyPreset(preset: { labelKey: string; from: () => Date; to: () => Date }): void {
     this.fromDate = format(preset.from(), 'yyyy-MM-dd');
     this.toDate = format(preset.to(), 'yyyy-MM-dd');
   }
@@ -172,10 +173,10 @@ export class ReportsComponent {
     const m = Math.floor((total % 3600) / 60);
     const days = new Set(entries.map((e) => new Date(e.startTime).toDateString())).size;
     return [
-      { label: 'Gesamt', value: `${h}h ${m}m` },
-      { label: 'Einträge', value: entries.length.toString() },
-      { label: 'Werktage', value: days.toString() },
-      { label: 'Ø pro Tag', value: days ? `${Math.floor(total / days / 3600)}h ${Math.floor((total / days % 3600) / 60)}m` : '0h' },
+      { labelKey: 'REPORTS.STAT_TOTAL', value: `${h}h ${m}m` },
+      { labelKey: 'REPORTS.STAT_ENTRIES', value: entries.length.toString() },
+      { labelKey: 'REPORTS.STAT_DAYS', value: days.toString() },
+      { labelKey: 'REPORTS.STAT_AVG_PER_DAY', value: days ? `${Math.floor(total / days / 3600)}h ${Math.floor((total / days % 3600) / 60)}m` : '0h' },
     ];
   });
 

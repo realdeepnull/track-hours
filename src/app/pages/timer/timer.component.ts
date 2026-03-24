@@ -1,20 +1,20 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { TimerService } from '../../services/timer.service';
 import { TimeEntryService } from '../../services/time-entry.service';
 import { ProjectService } from '../../services/project.service';
 import { DurationPipe } from '../../shared/duration.pipe';
-import { TASK_CATEGORIES } from '../../models/models';
+import { IconComponent } from '../../shared/icon.component';
 
 @Component({
   selector: 'app-timer',
-  standalone: true,
-  imports: [FormsModule, DurationPipe],
+  imports: [FormsModule, DurationPipe, TranslatePipe, IconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="p-6 max-w-2xl mx-auto space-y-6">
-      <h1 class="text-2xl font-bold text-slate-100">Timer</h1>
+      <h1 class="text-2xl font-bold text-slate-100">{{ 'TIMER.TITLE' | translate }}</h1>
 
       <!-- Timer Display -->
       <div class="bg-slate-800 rounded-2xl border border-slate-700 p-8 text-center space-y-6">
@@ -35,13 +35,15 @@ import { TASK_CATEGORIES } from '../../models/models';
         @if (!isRunning()) {
           <button (click)="startTimer()"
             [disabled]="!selectedProjectId() || !selectedTaskId()"
-            class="px-10 py-4 rounded-full text-lg font-semibold bg-indigo-600 hover:bg-indigo-500 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-indigo-900/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
-            ▶ Start
+            class="inline-flex items-center gap-2 px-10 py-4 rounded-full text-lg font-semibold bg-indigo-600 hover:bg-indigo-500 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-indigo-900/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
+            <app-icon name="play" class="size-5" />
+            {{ 'TIMER.START' | translate }}
           </button>
         } @else {
           <button (click)="stopTimer()"
-            class="px-10 py-4 rounded-full text-lg font-semibold bg-rose-600 hover:bg-rose-500 text-white transition-all shadow-lg shadow-rose-900/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-400">
-            ⏹ Stop
+            class="inline-flex items-center gap-2 px-10 py-4 rounded-full text-lg font-semibold bg-rose-600 hover:bg-rose-500 text-white transition-all shadow-lg shadow-rose-900/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-400">
+            <app-icon name="stop" class="size-5" />
+            {{ 'TIMER.STOP' | translate }}
           </button>
         }
       </div>
@@ -49,14 +51,14 @@ import { TASK_CATEGORIES } from '../../models/models';
       <!-- Project/Task Selector -->
       @if (!isRunning()) {
         <div class="bg-slate-800 rounded-xl border border-slate-700 p-5 space-y-4">
-          <h2 class="font-semibold text-slate-100">Projekt & Aufgabe auswählen</h2>
+          <h2 class="font-semibold text-slate-100">{{ 'TIMER.SELECT_PROJECT_TASK' | translate }}</h2>
 
           <!-- Project -->
           <div class="space-y-1.5">
-            <label for="project-select" class="text-sm font-medium text-slate-300">Projekt</label>
+            <label for="project-select" class="text-sm font-medium text-slate-300">{{ 'TIMER.PROJECT' | translate }}</label>
             <select id="project-select" [(ngModel)]="selectedProjectId" (ngModelChange)="onProjectChange()"
               class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              <option value="">– Projekt wählen –</option>
+              <option value="">{{ 'TIMER.SELECT_PROJECT_PLACEHOLDER' | translate }}</option>
               @for (p of projects(); track p.id) {
                 <option [value]="p.id">{{ p.name }}</option>
               }
@@ -65,11 +67,11 @@ import { TASK_CATEGORIES } from '../../models/models';
 
           <!-- Task -->
           <div class="space-y-1.5">
-            <label for="task-select" class="text-sm font-medium text-slate-300">Aufgabe</label>
+            <label for="task-select" class="text-sm font-medium text-slate-300">{{ 'TIMER.TASK' | translate }}</label>
             <select id="task-select" [(ngModel)]="selectedTaskId"
               [disabled]="!selectedProjectId()"
               class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50">
-              <option value="">– Aufgabe wählen –</option>
+              <option value="">{{ 'TIMER.SELECT_TASK_PLACEHOLDER' | translate }}</option>
               @for (t of availableTasks(); track t.id) {
                 <option [value]="t.id">{{ t.name }}</option>
               }
@@ -81,7 +83,7 @@ import { TASK_CATEGORIES } from '../../models/models';
       <!-- Today's entries -->
       <div class="bg-slate-800 rounded-xl border border-slate-700">
         <div class="px-5 py-4 border-b border-slate-700 flex items-center justify-between">
-          <h2 class="font-semibold text-slate-100">Heute</h2>
+          <h2 class="font-semibold text-slate-100">{{ 'TIMER.TODAY' | translate }}</h2>
           <span class="text-sm font-mono text-slate-400">{{ todayTotal() | duration }}</span>
         </div>
         <ul class="divide-y divide-slate-700/50" role="list">
@@ -101,7 +103,7 @@ import { TASK_CATEGORIES } from '../../models/models';
             </li>
           }
           @empty {
-            <li class="px-5 py-6 text-center text-slate-500 text-sm">Noch keine Einträge heute</li>
+            <li class="px-5 py-6 text-center text-slate-500 text-sm">{{ 'TIMER.NO_ENTRIES_TODAY' | translate }}</li>
           }
         </ul>
       </div>
@@ -161,7 +163,7 @@ export class TimerComponent implements OnInit {
   }
 
   getProjectName(id: string): string {
-    return this.projectService.getProject(id)?.name ?? '–';
+    return this.projectService.getProject(id)?.name ?? '-';
   }
 
   getProjectColor(id: string): string {
@@ -169,7 +171,7 @@ export class TimerComponent implements OnInit {
   }
 
   getTaskName(id: string): string {
-    return this.projectService.getTask(id)?.name ?? '–';
+    return this.projectService.getTask(id)?.name ?? '-';
   }
 
   formatTime(iso: string): string {

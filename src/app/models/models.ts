@@ -52,6 +52,7 @@ export interface AppSettings {
   reminderIntervalMinutes: number;
   autoSuggestLastUsed: boolean;
   theme: 'dark' | 'light';
+  language: 'de' | 'en';
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -59,6 +60,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   reminderIntervalMinutes: 60,
   autoSuggestLastUsed: true,
   theme: 'dark',
+  language: 'de',
 };
 
 export const PROJECT_COLORS = [

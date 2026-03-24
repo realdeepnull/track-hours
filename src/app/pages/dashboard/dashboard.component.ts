@@ -1,34 +1,35 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map, startWith } from 'rxjs';
 import { TimerService } from '../../services/timer.service';
 import { TimeEntryService } from '../../services/time-entry.service';
 import { ProjectService } from '../../services/project.service';
 import { DurationPipe } from '../../shared/duration.pipe';
-import { TASK_CATEGORIES } from '../../models/models';
-import { startOfDay, startOfWeek, startOfMonth, endOfDay } from 'date-fns';
+import { startOfDay, startOfWeek, startOfMonth } from 'date-fns';
 import { de } from 'date-fns/locale';
 
 @Component({
   selector: 'app-dashboard',
-  standalone: true,
-  imports: [RouterLink, DurationPipe],
+  imports: [RouterLink, DurationPipe, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="p-6 max-w-6xl mx-auto space-y-6">
       <!-- Header -->
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-slate-100">Dashboard</h1>
-        <span class="text-sm text-slate-400">{{ today }}</span>
+        <h1 class="text-2xl font-bold text-slate-100">{{ 'DASHBOARD.TITLE' | translate }}</h1>
+        <span class="text-sm text-slate-400">{{ today() }}</span>
       </div>
 
       <!-- Stats Row -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        @for (stat of stats(); track stat.label) {
+        @for (stat of stats(); track stat.labelKey) {
           <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
-            <div class="text-xs font-medium text-slate-400 uppercase tracking-wide mb-1">{{ stat.label }}</div>
+            <div class="text-xs font-medium text-slate-400 uppercase tracking-wide mb-1">{{ stat.labelKey | translate }}</div>
             <div class="text-2xl font-bold text-slate-100 font-mono">{{ stat.value }}</div>
-            @if (stat.sub) {
-              <div class="text-xs text-slate-500 mt-0.5">{{ stat.sub }}</div>
+            @if (stat.subKey) {
+              <div class="text-xs text-slate-500 mt-0.5">{{ stat.subKey | translate: stat.subParams }}</div>
             }
           </div>
         }
@@ -38,8 +39,8 @@ import { de } from 'date-fns/locale';
         <!-- Recent entries -->
         <div class="bg-slate-800 rounded-xl border border-slate-700">
           <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700">
-            <h2 class="font-semibold text-slate-100">Letzte Einträge</h2>
-            <a routerLink="/entries" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">Alle anzeigen →</a>
+            <h2 class="font-semibold text-slate-100">{{ 'DASHBOARD.RECENT_ENTRIES' | translate }}</h2>
+            <a routerLink="/entries" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">{{ 'DASHBOARD.VIEW_ALL' | translate }}</a>
           </div>
           <ul class="divide-y divide-slate-700/50" role="list">
             @for (entry of recentEntries(); track entry.id) {
@@ -57,7 +58,7 @@ import { de } from 'date-fns/locale';
               </li>
             }
             @empty {
-              <li class="px-5 py-8 text-center text-slate-500 text-sm">Noch keine Einträge</li>
+              <li class="px-5 py-8 text-center text-slate-500 text-sm">{{ 'DASHBOARD.NO_ENTRIES' | translate }}</li>
             }
           </ul>
         </div>
@@ -65,8 +66,8 @@ import { de } from 'date-fns/locale';
         <!-- Projects overview -->
         <div class="bg-slate-800 rounded-xl border border-slate-700">
           <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700">
-            <h2 class="font-semibold text-slate-100">Projekte diese Woche</h2>
-            <a routerLink="/projects" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">Verwalten →</a>
+            <h2 class="font-semibold text-slate-100">{{ 'DASHBOARD.PROJECTS_THIS_WEEK' | translate }}</h2>
+            <a routerLink="/projects" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">{{ 'DASHBOARD.MANAGE' | translate }}</a>
           </div>
           <ul class="divide-y divide-slate-700/50 p-3 space-y-1" role="list">
             @for (p of weeklyProjectStats(); track p.id) {
@@ -85,7 +86,7 @@ import { de } from 'date-fns/locale';
               </li>
             }
             @empty {
-              <li class="px-2 py-8 text-center text-slate-500 text-sm">Keine Projektdaten</li>
+              <li class="px-2 py-8 text-center text-slate-500 text-sm">{{ 'DASHBOARD.NO_PROJECT_DATA' | translate }}</li>
             }
           </ul>
         </div>
@@ -95,8 +96,8 @@ import { de } from 'date-fns/locale';
       @if (suggestions().length > 0) {
         <div class="bg-slate-800 rounded-xl border border-slate-700">
           <div class="px-5 py-4 border-b border-slate-700">
-            <h2 class="font-semibold text-slate-100">Schnellstart</h2>
-            <p class="text-xs text-slate-400 mt-0.5">Zuletzt verwendete Aufgaben</p>
+            <h2 class="font-semibold text-slate-100">{{ 'DASHBOARD.QUICK_START' | translate }}</h2>
+            <p class="text-xs text-slate-400 mt-0.5">{{ 'DASHBOARD.QUICK_START_HINT' | translate }}</p>
           </div>
           <div class="p-4 flex flex-wrap gap-2">
             @for (s of suggestions(); track s.taskId) {
@@ -118,8 +119,20 @@ export class DashboardComponent {
   private readonly timerService = inject(TimerService);
   private readonly timeEntryService = inject(TimeEntryService);
   private readonly projectService = inject(ProjectService);
+  private readonly translateService = inject(TranslateService);
 
-  readonly today = new Date().toLocaleDateString('de-DE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  private readonly langSignal = toSignal(
+    this.translateService.onLangChange.pipe(
+      map((e) => e.lang),
+      startWith(this.translateService.getCurrentLang() ?? 'de')
+    )
+  );
+
+  readonly today = computed(() => {
+    const lang = this.langSignal();
+    const locale = lang === 'en' ? 'en-US' : 'de-DE';
+    return new Date().toLocaleDateString(locale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  });
 
   readonly stats = computed(() => {
     const now = new Date();
@@ -128,7 +141,8 @@ export class DashboardComponent {
     const monthStart = startOfMonth(now).getTime();
 
     const entries = this.timeEntryService.entries().filter((e) => e.endTime);
-    const todaySecs = entries.filter((e) => new Date(e.startTime).getTime() >= dayStart).reduce((s, e) => s + e.durationSeconds, 0);
+    const todayEntries = entries.filter((e) => new Date(e.startTime).getTime() >= dayStart);
+    const todaySecs = todayEntries.reduce((s, e) => s + e.durationSeconds, 0);
     const weekSecs = entries.filter((e) => new Date(e.startTime).getTime() >= weekStart).reduce((s, e) => s + e.durationSeconds, 0);
     const monthSecs = entries.filter((e) => new Date(e.startTime).getTime() >= monthStart).reduce((s, e) => s + e.durationSeconds, 0);
 
@@ -138,12 +152,14 @@ export class DashboardComponent {
       return `${h}h ${m}m`;
     };
 
-    return [
-      { label: 'Heute', value: fmt(todaySecs), sub: `${entries.filter((e) => new Date(e.startTime).getTime() >= dayStart).length} Einträge` },
-      { label: 'Diese Woche', value: fmt(weekSecs), sub: null },
-      { label: 'Diesen Monat', value: fmt(monthSecs), sub: null },
-      { label: 'Projekte', value: this.projectService.activeProjects().length.toString(), sub: 'aktiv' },
+    interface Stat { labelKey: string; value: string; subKey: string | null; subParams: Record<string, unknown> | null }
+    const result: Stat[] = [
+      { labelKey: 'DASHBOARD.STAT_TODAY', value: fmt(todaySecs), subKey: 'DASHBOARD.ENTRIES_COUNT', subParams: { count: todayEntries.length } },
+      { labelKey: 'DASHBOARD.STAT_WEEK', value: fmt(weekSecs), subKey: null, subParams: null },
+      { labelKey: 'DASHBOARD.STAT_MONTH', value: fmt(monthSecs), subKey: null, subParams: null },
+      { labelKey: 'DASHBOARD.STAT_PROJECTS', value: this.projectService.activeProjects().length.toString(), subKey: 'DASHBOARD.ACTIVE', subParams: null },
     ];
+    return result;
   });
 
   readonly recentEntries = computed(() =>
@@ -204,6 +220,7 @@ export class DashboardComponent {
   }
 
   formatEntryDate(iso: string): string {
-    return new Date(iso).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    const locale = this.translateService.getCurrentLang() === 'en' ? 'en-US' : 'de-DE';
+    return new Date(iso).toLocaleDateString(locale, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
   }
 }
