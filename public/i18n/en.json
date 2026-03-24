@@ -91,7 +91,8 @@
     "START": "Start",
     "END": "End",
     "OPTIONAL": "Optional",
-    "CONFIRM_DELETE": "Delete?"
+    "CONFIRM_DELETE": "Delete?",
+    "END_BEFORE_START": "End time must be after start time"
   },
   "PROJECTS": {
     "TITLE": "Projects",

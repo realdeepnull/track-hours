@@ -221,13 +221,16 @@ type ViewMode = 'day' | 'week' | 'month';
           <div class="grid grid-cols-2 gap-4">
             <div class="space-y-1.5">
               <label for="entry-start" class="text-sm text-slate-300">{{ 'ENTRIES.START' | translate }} *</label>
-              <input id="entry-start" type="datetime-local" [(ngModel)]="dStartTime"
+              <input id="entry-start" type="datetime-local" [ngModel]="dStartTime()" (ngModelChange)="dStartTime.set($event)"
                 class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
             </div>
             <div class="space-y-1.5">
               <label for="entry-end" class="text-sm text-slate-300">{{ 'ENTRIES.END' | translate }} *</label>
-              <input id="entry-end" type="datetime-local" [(ngModel)]="dEndTime"
-                class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
+              <input id="entry-end" type="datetime-local" [ngModel]="dEndTime()" (ngModelChange)="dEndTime.set($event)"
+                [class]="dEndBeforeStart() ? 'w-full bg-slate-700 border border-rose-500 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500' : 'w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500'"/>
+              @if (dEndBeforeStart()) {
+                <p class="text-xs text-rose-400" role="alert">{{ 'ENTRIES.END_BEFORE_START' | translate }}</p>
+              }
             </div>
           </div>
 
@@ -238,7 +241,7 @@ type ViewMode = 'day' | 'week' | 'month';
           </div>
 
           <div class="flex gap-3 pt-2">
-            <button (click)="saveEntry()" [disabled]="!dProjectId() || !dTaskId() || !dStartTime || !dEndTime"
+            <button (click)="saveEntry()" [disabled]="!dProjectId() || !dTaskId() || !dStartTime() || !dEndTime() || dEndBeforeStart()"
               class="flex-1 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
               {{ 'COMMON.SAVE' | translate }}
             </button>
@@ -373,9 +376,14 @@ export class EntriesComponent {
   confirmDeleteEntryId = signal<string | null>(null);
   dProjectId = signal('');
   dTaskId = signal('');
-  dStartTime = '';
-  dEndTime = '';
+  dStartTime = signal('');
+  dEndTime = signal('');
   dNote = '';
+
+  readonly dEndBeforeStart = computed(() =>
+    !!this.dStartTime() && !!this.dEndTime() &&
+    new Date(this.dEndTime()) <= new Date(this.dStartTime())
+  );
 
   readonly dialogTasks = computed(() => {
     if (!this.dProjectId()) return [];
@@ -387,8 +395,8 @@ export class EntriesComponent {
     const now = new Date();
     this.dProjectId.set('');
     this.dTaskId.set('');
-    this.dStartTime = this.toLocalDatetimeString(now);
-    this.dEndTime = this.toLocalDatetimeString(now);
+    this.dStartTime.set(this.toLocalDatetimeString(now));
+    this.dEndTime.set(this.toLocalDatetimeString(now));
     this.dNote = '';
     this.showDialog.set(true);
   }
@@ -397,8 +405,8 @@ export class EntriesComponent {
     this.editingEntryId.set(entry.id);
     this.dProjectId.set(entry.projectId);
     this.dTaskId.set(entry.taskId);
-    this.dStartTime = this.toLocalDatetimeString(new Date(entry.startTime));
-    this.dEndTime = entry.endTime ? this.toLocalDatetimeString(new Date(entry.endTime)) : '';
+    this.dStartTime.set(this.toLocalDatetimeString(new Date(entry.startTime)));
+    this.dEndTime.set(entry.endTime ? this.toLocalDatetimeString(new Date(entry.endTime)) : '');
     this.dNote = entry.note ?? '';
     this.showDialog.set(true);
   }
@@ -406,8 +414,9 @@ export class EntriesComponent {
   closeDialog(): void { this.showDialog.set(false); }
 
   async saveEntry(): Promise<void> {
-    const start = new Date(this.dStartTime).toISOString();
-    const end = new Date(this.dEndTime).toISOString();
+    if (this.dEndBeforeStart()) return;
+    const start = new Date(this.dStartTime()).toISOString();
+    const end = new Date(this.dEndTime()).toISOString();
     const id = this.editingEntryId();
     if (id) {
       await this.timeEntryService.updateEntry(id, {

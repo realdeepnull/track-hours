@@ -91,7 +91,8 @@
     "START": "Start",
     "END": "Ende",
     "OPTIONAL": "Optional",
-    "CONFIRM_DELETE": "Löschen?"
+    "CONFIRM_DELETE": "Löschen?",
+    "END_BEFORE_START": "Endzeit muss nach der Startzeit liegen"
   },
   "PROJECTS": {
     "TITLE": "Projekte",
