@@ -10,7 +10,6 @@ import { format, startOfMonth, endOfMonth, subMonths } from 'date-fns';
 
 @Component({
   selector: 'app-reports',
-  standalone: true,
   imports: [FormsModule, DurationPipe, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
