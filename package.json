@@ -24,18 +24,21 @@
     "files": [
       "dist/**/*",
       "electron/**/*",
+      "public/**/*",
       "node_modules/**/*",
       "package.json"
     ],
     "win": {
-      "target": "dir"
+      "target": "dir",
+      "icon": "public/favicon256.png"
     },
     "mac": {
       "target": "dmg",
       "category": "public.app-category.productivity"
     },
     "linux": {
-      "target": "AppImage"
+      "target": "AppImage",
+      "icon": "public/favicon256.png"
     }
   },
   "private": true,

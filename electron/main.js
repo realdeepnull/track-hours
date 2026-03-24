@@ -5,6 +5,8 @@ const fs = require('fs');
 let mainWindow;
 const isDev = process.argv.includes('--dev');
 
+app.setAppUserModelId('com.trackhours.app');
+
 function getDataDir() {
   return path.join(app.getPath('userData'), 'track-hours-data');
 }
@@ -23,7 +25,7 @@ function createWindow() {
     height: 800,
     minWidth: 900,
     minHeight: 600,
-    icon: path.join(__dirname, '../public/favicon.ico'),
+    icon: path.join(__dirname, '../public/favicon256.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
