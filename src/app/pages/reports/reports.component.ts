@@ -34,17 +34,17 @@ import { de } from 'date-fns/locale';
       <div class="bg-slate-800 rounded-xl border border-slate-700 p-4 flex flex-wrap gap-4 items-end">
         <div class="space-y-1.5">
           <label class="text-xs text-slate-400 font-medium">{{ 'REPORTS.DATE_FROM' | translate }}</label>
-          <input type="date" [(ngModel)]="fromDate"
+          <input type="date" [ngModel]="fromDate()" (ngModelChange)="fromDate.set($event)"
             class="bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
         </div>
         <div class="space-y-1.5">
           <label class="text-xs text-slate-400 font-medium">{{ 'REPORTS.DATE_TO' | translate }}</label>
-          <input type="date" [(ngModel)]="toDate"
+          <input type="date" [ngModel]="toDate()" (ngModelChange)="toDate.set($event)"
             class="bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
         </div>
         <div class="space-y-1.5">
           <label class="text-xs text-slate-400 font-medium">{{ 'REPORTS.FILTER_PROJECT' | translate }}</label>
-          <select [(ngModel)]="filterProjectId"
+          <select [ngModel]="filterProjectId()" (ngModelChange)="filterProjectId.set($event)"
             class="bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
             <option value="">{{ 'REPORTS.FILTER_ALL' | translate }}</option>
             @for (p of projects(); track p.id) {
@@ -143,9 +143,9 @@ export class ReportsComponent {
   readonly projects = this.projectService.activeProjects;
 
   // Default to current month
-  fromDate = format(startOfMonth(new Date()), 'yyyy-MM-dd');
-  toDate = format(endOfMonth(new Date()), 'yyyy-MM-dd');
-  filterProjectId = '';
+  fromDate = signal(format(startOfMonth(new Date()), 'yyyy-MM-dd'));
+  toDate = signal(format(endOfMonth(new Date()), 'yyyy-MM-dd'));
+  filterProjectId = signal('');
 
   readonly presets = [
     { labelKey: 'REPORTS.PRESET_THIS_MONTH', from: () => startOfMonth(new Date()), to: () => endOfMonth(new Date()) },
@@ -154,15 +154,15 @@ export class ReportsComponent {
   ];
 
   applyPreset(preset: { labelKey: string; from: () => Date; to: () => Date }): void {
-    this.fromDate = format(preset.from(), 'yyyy-MM-dd');
-    this.toDate = format(preset.to(), 'yyyy-MM-dd');
+    this.fromDate.set(format(preset.from(), 'yyyy-MM-dd'));
+    this.toDate.set(format(preset.to(), 'yyyy-MM-dd'));
   }
 
   readonly filteredEntries = computed(() => {
-    const from = new Date(this.fromDate + 'T00:00:00');
-    const to = new Date(this.toDate + 'T23:59:59');
+    const from = new Date(this.fromDate() + 'T00:00:00');
+    const to = new Date(this.toDate() + 'T23:59:59');
     let entries = this.timeEntryService.entriesForRange(from, to);
-    if (this.filterProjectId) entries = entries.filter((e) => e.projectId === this.filterProjectId);
+    if (this.filterProjectId()) entries = entries.filter((e) => e.projectId === this.filterProjectId());
     return entries;
   });
 
@@ -213,7 +213,7 @@ export class ReportsComponent {
       this.filteredEntries(),
       this.projectService.projects(),
       this.projectService.tasks(),
-      `bericht-${this.fromDate}-${this.toDate}.csv`
+      `bericht-${this.fromDate()}-${this.toDate()}.csv`
     );
   }
 
@@ -222,8 +222,8 @@ export class ReportsComponent {
       this.filteredEntries(),
       this.projectService.projects(),
       this.projectService.tasks(),
-      `${this.fromDate} – ${this.toDate}`,
-      `bericht-${this.fromDate}-${this.toDate}.pdf`
+      `${this.fromDate()} – ${this.toDate()}`,
+      `bericht-${this.fromDate()}-${this.toDate()}.pdf`
     );
   }
 }

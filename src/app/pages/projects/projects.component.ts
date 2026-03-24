@@ -111,13 +111,13 @@ type DialogMode = 'project' | 'task' | null;
 
           <div class="space-y-1.5">
             <label for="proj-name" class="text-sm text-slate-300">{{ 'PROJECTS.NAME' | translate }} *</label>
-            <input id="proj-name" [(ngModel)]="formName" type="text" [placeholder]="'PROJECTS.NAME_PLACEHOLDER' | translate"
+            <input id="proj-name" [ngModel]="formName()" (ngModelChange)="formName.set($event)" type="text" [placeholder]="'PROJECTS.NAME_PLACEHOLDER' | translate"
               class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
           </div>
 
           <div class="space-y-1.5">
             <label for="proj-desc" class="text-sm text-slate-300">{{ 'PROJECTS.DESCRIPTION' | translate }}</label>
-            <textarea id="proj-desc" [(ngModel)]="formDescription" rows="2" [placeholder]="'ENTRIES.OPTIONAL' | translate"
+            <textarea id="proj-desc" [ngModel]="formDescription()" (ngModelChange)="formDescription.set($event)" rows="2" [placeholder]="'ENTRIES.OPTIONAL' | translate"
               class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
           </div>
 
@@ -137,7 +137,7 @@ type DialogMode = 'project' | 'task' | null;
           </div>
 
           <div class="flex gap-3 pt-2">
-            <button (click)="saveProject()" [disabled]="!formName.trim()"
+            <button (click)="saveProject()" [disabled]="!formName().trim()"
               class="flex-1 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
               {{ 'COMMON.SAVE' | translate }}
             </button>
@@ -159,13 +159,13 @@ type DialogMode = 'project' | 'task' | null;
 
           <div class="space-y-1.5">
             <label for="task-name" class="text-sm text-slate-300">{{ 'PROJECTS.NAME' | translate }} *</label>
-            <input id="task-name" [(ngModel)]="formName" type="text" [placeholder]="'PROJECTS.TASK_NAME' | translate"
+            <input id="task-name" [ngModel]="formName()" (ngModelChange)="formName.set($event)" type="text" [placeholder]="'PROJECTS.TASK_NAME' | translate"
               class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
           </div>
 
           <div class="space-y-1.5">
             <label for="task-cat" class="text-sm text-slate-300">{{ 'PROJECTS.TASK_CATEGORY' | translate }}</label>
-            <select id="task-cat" [(ngModel)]="formCategory"
+            <select id="task-cat" [ngModel]="formCategory()" (ngModelChange)="formCategory.set($event)"
               class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
               @for (cat of categories; track cat.value) {
                 <option [value]="cat.value">{{ cat.label }}</option>
@@ -175,12 +175,12 @@ type DialogMode = 'project' | 'task' | null;
 
           <div class="space-y-1.5">
             <label for="task-desc" class="text-sm text-slate-300">{{ 'PROJECTS.DESCRIPTION' | translate }}</label>
-            <input id="task-desc" [(ngModel)]="formDescription" type="text" [placeholder]="'ENTRIES.OPTIONAL' | translate"
+            <input id="task-desc" [ngModel]="formDescription()" (ngModelChange)="formDescription.set($event)" type="text" [placeholder]="'ENTRIES.OPTIONAL' | translate"
               class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
           </div>
 
           <div class="flex gap-3 pt-2">
-            <button (click)="saveTask()" [disabled]="!formName.trim()"
+            <button (click)="saveTask()" [disabled]="!formName().trim()"
               class="flex-1 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
               {{ 'COMMON.SAVE' | translate }}
             </button>
@@ -208,31 +208,31 @@ export class ProjectsComponent {
   confirmDeleteProjectId = signal<string | null>(null);
 
   // Form state
-  formName = '';
-  formDescription = '';
+  formName = signal('');
+  formDescription = signal('');
   formColor = signal(PROJECT_COLORS[0]);
   formCategory = signal<Task['category']>('development');
 
   openProjectDialog(): void {
     this.editingProjectId.set(null);
-    this.formName = '';
-    this.formDescription = '';
+    this.formName.set('');
+    this.formDescription.set('');
     this.formColor.set(PROJECT_COLORS[0]);
     this.dialogMode.set('project');
   }
 
   openEditProjectDialog(project: { id: string; name: string; description?: string; color: string }): void {
     this.editingProjectId.set(project.id);
-    this.formName = project.name;
-    this.formDescription = project.description ?? '';
+    this.formName.set(project.name);
+    this.formDescription.set(project.description ?? '');
     this.formColor.set(project.color);
     this.dialogMode.set('project');
   }
 
   openTaskDialog(projectId: string): void {
     this.taskDialogProjectId.set(projectId);
-    this.formName = '';
-    this.formDescription = '';
+    this.formName.set('');
+    this.formDescription.set('');
     this.formCategory.set('development');
     this.dialogMode.set('task');
   }
@@ -242,27 +242,27 @@ export class ProjectsComponent {
   }
 
   async saveProject(): Promise<void> {
-    if (!this.formName.trim()) return;
+    if (!this.formName().trim()) return;
     const id = this.editingProjectId();
     if (id) {
       await this.projectService.updateProject(id, {
-        name: this.formName,
-        description: this.formDescription,
+        name: this.formName(),
+        description: this.formDescription(),
         color: this.formColor(),
       });
     } else {
-      await this.projectService.createProject(this.formName, this.formDescription, this.formColor());
+      await this.projectService.createProject(this.formName(), this.formDescription(), this.formColor());
     }
     this.closeDialog();
   }
 
   async saveTask(): Promise<void> {
-    if (!this.formName.trim()) return;
+    if (!this.formName().trim()) return;
     await this.projectService.createTask(
       this.taskDialogProjectId(),
-      this.formName,
+      this.formName(),
       this.formCategory(),
-      this.formDescription
+      this.formDescription()
     );
     this.closeDialog();
   }

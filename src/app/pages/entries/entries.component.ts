@@ -74,16 +74,16 @@ type ViewMode = 'day' | 'week' | 'month';
 
       <!-- Filters & Search -->
       <div class="flex flex-wrap gap-3">
-        <input type="search" [(ngModel)]="searchQuery" [placeholder]="'ENTRIES.SEARCH_PLACEHOLDER' | translate"
+        <input type="search" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" [placeholder]="'ENTRIES.SEARCH_PLACEHOLDER' | translate"
           class="flex-1 min-w-[200px] bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder:text-slate-500"/>
-        <select [(ngModel)]="filterProjectId"
+        <select [ngModel]="filterProjectId()" (ngModelChange)="filterProjectId.set($event)"
           class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
           <option value="">{{ 'ENTRIES.ALL_PROJECTS' | translate }}</option>
           @for (p of projects(); track p.id) {
             <option [value]="p.id">{{ p.name }}</option>
           }
         </select>
-        <select [(ngModel)]="filterCategory"
+        <select [ngModel]="filterCategory()" (ngModelChange)="filterCategory.set($event)"
           class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
           <option value="">{{ 'ENTRIES.ALL_CATEGORIES' | translate }}</option>
           @for (cat of categories; track cat.value) {
@@ -265,9 +265,9 @@ export class EntriesComponent {
 
   viewMode = signal<ViewMode>('week');
   currentDate = signal(new Date());
-  searchQuery = '';
-  filterProjectId = '';
-  filterCategory = '';
+  searchQuery = signal('');
+  filterProjectId = signal('');
+  filterCategory = signal('');
 
   readonly viewTabs = [
     { value: 'day' as ViewMode, label: 'ENTRIES.VIEW_DAY' },
@@ -301,9 +301,9 @@ export class EntriesComponent {
   });
 
   readonly filteredEntries = computed(() => {
-    const search = this.searchQuery.toLowerCase();
-    const proj = this.filterProjectId;
-    const cat = this.filterCategory;
+    const search = this.searchQuery().toLowerCase();
+    const proj = this.filterProjectId();
+    const cat = this.filterCategory();
     return this.periodEntries().filter((e) => {
       if (proj && e.projectId !== proj) return false;
       if (cat) {
