@@ -39,9 +39,9 @@ import { AppSettings, DEFAULT_SETTINGS } from '../../models/models';
       <div class="bg-slate-800 rounded-xl border border-slate-700 p-5 space-y-4">
         <h2 class="font-semibold text-slate-100">{{ 'SETTINGS.REMINDERS' | translate }}</h2>
 
-        <label class="flex items-center justify-between gap-4 cursor-pointer">
+        <div class="flex items-center justify-between gap-4 cursor-pointer">
           <div>
-            <div class="text-sm font-medium text-slate-200">
+            <div id="reminders-enable-label" class="text-sm font-medium text-slate-200">
               {{ 'SETTINGS.REMINDERS_ENABLE' | translate }}
             </div>
             <div class="text-xs text-slate-400 mt-0.5">
@@ -50,6 +50,7 @@ import { AppSettings, DEFAULT_SETTINGS } from '../../models/models';
           </div>
           <button
             role="switch"
+            aria-labelledby="reminders-enable-label"
             [attr.aria-checked]="settings().reminderEnabled"
             (click)="toggle('reminderEnabled')"
             class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400"
@@ -60,7 +61,7 @@ import { AppSettings, DEFAULT_SETTINGS } from '../../models/models';
               [class]="settings().reminderEnabled ? 'translate-x-6' : 'translate-x-1'"
             ></span>
           </button>
-        </label>
+        </div>
 
         @if (settings().reminderEnabled) {
           <div class="space-y-1.5">
@@ -84,9 +85,9 @@ import { AppSettings, DEFAULT_SETTINGS } from '../../models/models';
       <div class="bg-slate-800 rounded-xl border border-slate-700 p-5 space-y-4">
         <h2 class="font-semibold text-slate-100">{{ 'SETTINGS.QUICK_START' | translate }}</h2>
 
-        <label class="flex items-center justify-between gap-4 cursor-pointer">
+        <div class="flex items-center justify-between gap-4 cursor-pointer">
           <div>
-            <div class="text-sm font-medium text-slate-200">
+            <div id="auto-suggest-label" class="text-sm font-medium text-slate-200">
               {{ 'SETTINGS.AUTO_SUGGEST' | translate }}
             </div>
             <div class="text-xs text-slate-400 mt-0.5">
@@ -95,6 +96,7 @@ import { AppSettings, DEFAULT_SETTINGS } from '../../models/models';
           </div>
           <button
             role="switch"
+            aria-labelledby="auto-suggest-label"
             [attr.aria-checked]="settings().autoSuggestLastUsed"
             (click)="toggle('autoSuggestLastUsed')"
             class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400"
@@ -105,7 +107,7 @@ import { AppSettings, DEFAULT_SETTINGS } from '../../models/models';
               [class]="settings().autoSuggestLastUsed ? 'translate-x-6' : 'translate-x-1'"
             ></span>
           </button>
-        </label>
+        </div>
       </div>
 
       <!-- Save button -->

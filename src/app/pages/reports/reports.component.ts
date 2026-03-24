@@ -7,7 +7,6 @@ import { ExportService } from '../../services/export.service';
 import { DurationPipe } from '../../shared/duration.pipe';
 import { TASK_CATEGORIES } from '../../models/models';
 import { format, startOfMonth, endOfMonth, subMonths } from 'date-fns';
-import { de } from 'date-fns/locale';
 
 @Component({
   selector: 'app-reports',
@@ -33,18 +32,18 @@ import { de } from 'date-fns/locale';
       <!-- Date Range Picker -->
       <div class="bg-slate-800 rounded-xl border border-slate-700 p-4 flex flex-wrap gap-4 items-end">
         <div class="space-y-1.5">
-          <label class="text-xs text-slate-400 font-medium">{{ 'REPORTS.DATE_FROM' | translate }}</label>
-          <input type="date" [ngModel]="fromDate()" (ngModelChange)="fromDate.set($event)"
+          <label for="date-from" class="text-xs text-slate-400 font-medium">{{ 'REPORTS.DATE_FROM' | translate }}</label>
+          <input id="date-from" type="date" [ngModel]="fromDate()" (ngModelChange)="fromDate.set($event)"
             class="bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
         </div>
         <div class="space-y-1.5">
-          <label class="text-xs text-slate-400 font-medium">{{ 'REPORTS.DATE_TO' | translate }}</label>
-          <input type="date" [ngModel]="toDate()" (ngModelChange)="toDate.set($event)"
+          <label for="date-to" class="text-xs text-slate-400 font-medium">{{ 'REPORTS.DATE_TO' | translate }}</label>
+          <input id="date-to" type="date" [ngModel]="toDate()" (ngModelChange)="toDate.set($event)"
             class="bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
         </div>
         <div class="space-y-1.5">
-          <label class="text-xs text-slate-400 font-medium">{{ 'REPORTS.FILTER_PROJECT' | translate }}</label>
-          <select [ngModel]="filterProjectId()" (ngModelChange)="filterProjectId.set($event)"
+          <label for="filter-project" class="text-xs text-slate-400 font-medium">{{ 'REPORTS.FILTER_PROJECT' | translate }}</label>
+          <select id="filter-project" [ngModel]="filterProjectId()" (ngModelChange)="filterProjectId.set($event)"
             class="bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
             <option value="">{{ 'REPORTS.FILTER_ALL' | translate }}</option>
             @for (p of projects(); track p.id) {
