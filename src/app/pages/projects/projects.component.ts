@@ -54,7 +54,7 @@ type DialogMode = 'project' | 'task' | null;
                 </button>
                 @if (confirmDeleteProjectId() === project.id) {
                   <span class="text-xs text-rose-400">{{ 'PROJECTS.CONFIRM_DELETE' | translate }}</span>
-                  <button (click)="deleteProject(project.id)"
+                  <button (click)="archiveProject(project.id)"
                     class="px-2 py-1 rounded text-xs bg-rose-600 hover:bg-rose-500 text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-400"
                     [attr.aria-label]="'COMMON.CONFIRM' | translate">
                     {{ 'COMMON.YES' | translate }}
@@ -88,7 +88,7 @@ type DialogMode = 'project' | 'task' | null;
                     @if (task.description) {
                       <span class="text-xs text-slate-500 truncate max-w-xs">{{ task.description }}</span>
                     }
-                    <button (click)="deleteTask(task.id)"
+                    <button (click)="archiveTask(task.id)"
                       class="p-1 rounded text-slate-500 hover:text-rose-400 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-400"
                       [attr.aria-label]="'PROJECTS.DELETE_TASK_LABEL' | translate">
                       <app-icon name="close" class="w-3.5 h-3.5" />
@@ -272,8 +272,17 @@ export class ProjectsComponent {
     await this.projectService.deleteProject(id);
   }
 
+  async archiveProject(id: string): Promise<void> {
+    this.confirmDeleteProjectId.set(null);
+    await this.projectService.archiveProject(id);
+  }
+
   async deleteTask(id: string): Promise<void> {
     await this.projectService.deleteTask(id);
+  }
+
+  async archiveTask(id: string): Promise<void> {
+    await this.projectService.archiveTask(id);
   }
 
   taskCount(projectId: string): number {
