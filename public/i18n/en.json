@@ -151,5 +151,10 @@
     "EXPORT_FORMAT": "Export format",
     "ABOUT_DESC": "Modern time tracking for individuals & small teams",
     "ABOUT_STORAGE": "Data is stored locally."
+  },
+  "EXPORT": {
+    "APP_TITLE": "Track Hours - Time Tracking",
+    "CREATED": "Created",
+    "TOTAL": "Total"
   }
 }

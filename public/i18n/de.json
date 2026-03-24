@@ -151,5 +151,10 @@
     "EXPORT_FORMAT": "Exportformat",
     "ABOUT_DESC": "Moderne Zeiterfassung für Einzelpersonen & kleine Teams",
     "ABOUT_STORAGE": "Daten werden lokal gespeichert."
+  },
+  "EXPORT": {
+    "APP_TITLE": "Track Hours - Zeiterfassung",
+    "CREATED": "Erstellt",
+    "TOTAL": "Gesamt"
   }
 }
