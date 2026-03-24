@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { AppSettings, DEFAULT_SETTINGS, Project, Task, TimeEntry } from '../models/models';
 
 declare global {
@@ -32,6 +32,8 @@ const LS_KEYS = {
 export class StorageService {
   private readonly isElectron = typeof window !== 'undefined' && !!window.electronAPI?.isElectron;
 
+  readonly settings = signal<AppSettings>({ ...DEFAULT_SETTINGS });
+
   async loadProjects(): Promise<Project[]> {
     return (await this.load<Project[]>(KEYS.projects, LS_KEYS.projects)) ?? [];
   }
@@ -57,10 +59,13 @@ export class StorageService {
   }
 
   async loadSettings(): Promise<AppSettings> {
-    return (await this.load<AppSettings>(KEYS.settings, LS_KEYS.settings)) ?? { ...DEFAULT_SETTINGS };
+    const s = (await this.load<AppSettings>(KEYS.settings, LS_KEYS.settings)) ?? { ...DEFAULT_SETTINGS };
+    this.settings.set({ ...DEFAULT_SETTINGS, ...s });
+    return s;
   }
 
   async saveSettings(settings: AppSettings): Promise<void> {
+    this.settings.set(settings);
     await this.save(KEYS.settings, LS_KEYS.settings, settings);
   }
 

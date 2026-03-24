@@ -6,6 +6,7 @@ import { map, startWith } from 'rxjs';
 import { TimerService } from '../../services/timer.service';
 import { TimeEntryService } from '../../services/time-entry.service';
 import { ProjectService } from '../../services/project.service';
+import { StorageService } from '../../services/storage.service';
 import { DurationPipe } from '../../shared/duration.pipe';
 import { startOfDay, startOfWeek, startOfMonth } from 'date-fns';
 import { de } from 'date-fns/locale';
@@ -119,6 +120,7 @@ export class DashboardComponent {
   private readonly timerService = inject(TimerService);
   private readonly timeEntryService = inject(TimeEntryService);
   private readonly projectService = inject(ProjectService);
+  private readonly storageService = inject(StorageService);
   private readonly translateService = inject(TranslateService);
 
   private readonly langSignal = toSignal(
@@ -190,6 +192,8 @@ export class DashboardComponent {
   });
 
   readonly suggestions = computed(() => {
+    if (!this.storageService.settings().autoSuggestLastUsed) return [];
+
     const entries = [...this.timeEntryService.entries()]
       .filter((e) => e.endTime)
       .sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime());
