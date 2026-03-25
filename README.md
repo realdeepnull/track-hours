@@ -121,4 +121,8 @@ Contributions, issues and feature requests are welcome. Feel free to open an iss
 
 ## License
 
-This project is private and not yet licensed for public distribution.
+This project is licensed under the **MIT License (Non-Commercial)** — see the [LICENSE](LICENSE) file for details.
+
+- Free to use and share for non-commercial purposes
+- May not be sold or included in commercial products or services
+- Modified versions must carry the same license terms
