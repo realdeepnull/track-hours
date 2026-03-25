@@ -19,7 +19,7 @@
           "options": {
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
-            "allowedCommonJsDependencies": ["core-js", "raf", "rgbcolor", "canvg"],
+            "allowedCommonJsDependencies": ["core-js", "raf", "rgbcolor", "canvg", "html2canvas"],
             "assets": [
               {
                 "glob": "**/*",
