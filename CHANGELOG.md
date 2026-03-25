@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.2.0](https://github.com/ynnckrkn/track-hours/compare/track-hours-v0.1.0...track-hours-v0.2.0) (2026-03-25)
+
+
+### Features
+
+* add first track hours layout and logic to track hours ([65497f7](https://github.com/ynnckrkn/track-hours/commit/65497f730d1e38c7e46007fd0013ef1a14084a8b))
+* add multi language en and de ([6176894](https://github.com/ynnckrkn/track-hours/commit/61768941cb983093950abecb2dbaa8e0595e510d))
+* display logo ([8ed23f0](https://github.com/ynnckrkn/track-hours/commit/8ed23f08b1b29ac8cc5f5e433f42d6bc140b9b20))
+* mulit language for pdf and csv ([e3e1f4d](https://github.com/ynnckrkn/track-hours/commit/e3e1f4d85f0e96f823c4fcf5a3a50c3a3c14892c))
+* validate time range ([c516abd](https://github.com/ynnckrkn/track-hours/commit/c516abdbfdedd87157991e9dac5aca18fc968c79))
+
+
+### Bug Fixes
+
+* edit and delete icons are invisible in time entries ([71f11a2](https://github.com/ynnckrkn/track-hours/commit/71f11a20edc6b3da3e5f4871e40ca84bf952defb))
+* filter are not reactiv ([04b2425](https://github.com/ynnckrkn/track-hours/commit/04b2425661332bdfd2601fe974e3069f685e5f28))
+* i18n translate in production ([d6ef31c](https://github.com/ynnckrkn/track-hours/commit/d6ef31cd8b4bbbc0ac3193694140394cf314a83a))
+* the Quick Start feature is visible even when it is turned off ([3feb571](https://github.com/ynnckrkn/track-hours/commit/3feb5717a4ad078fdb43b80ddec28c574e3c9383))
+
 ## [0.1.0] - 2026-03-25
 
 ### Added
