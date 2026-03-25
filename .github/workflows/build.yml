@@ -25,6 +25,7 @@ jobs:
       - name: Build Angular + Electron (Windows)
         run: npm run electron:build
         env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Optional: SignPath.io Code Signing (OSS-Programm)
           # CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
           # CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_PASSWORD }}
@@ -53,6 +54,8 @@ jobs:
 
       - name: Build Angular + Electron (Linux)
         run: npm run electron:build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Linux AppImage to release
         uses: softprops/action-gh-release@v2
