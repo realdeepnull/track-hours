@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.2.2](https://github.com/ynnckrkn/track-hours/compare/track-hours-v0.2.1...track-hours-v0.2.2) (2026-03-25)
+
+
+### Bug Fixes
+
+* pass tag_name input to release upload steps ([87c2ba5](https://github.com/ynnckrkn/track-hours/commit/87c2ba572c3a7e87c399934d2e48eadf214b696a))
+
 ## [0.2.1](https://github.com/ynnckrkn/track-hours/compare/track-hours-v0.2.0...track-hours-v0.2.1) (2026-03-25)
 
 
