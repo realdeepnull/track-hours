@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.2.1](https://github.com/ynnckrkn/track-hours/compare/track-hours-v0.2.0...track-hours-v0.2.1) (2026-03-25)
+
+
+### Bug Fixes
+
+* suppress html2canvas CommonJS optimization bailout warning ([d6d9854](https://github.com/ynnckrkn/track-hours/commit/d6d9854303701e6b4997cd0cd3a745804c362908))
+
 ## [0.2.0](https://github.com/ynnckrkn/track-hours/compare/track-hours-v0.1.0...track-hours-v0.2.0) (2026-03-25)
 
 
