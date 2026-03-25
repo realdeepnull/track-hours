@@ -1,109 +1,124 @@
 # Track Hours
 
-Moderne Desktop-Zeiterfassungsanwendung für Projekte und Aufgaben, gebaut mit **Angular 21** + **Electron**.
+A modern, offline-first desktop application for tracking time across projects and tasks — built with Angular and Electron.
+
+Whether you are a freelancer, developer, or anyone who needs to keep track of how their time is spent, **Track Hours** gives you a clean and distraction-free environment to log, review, and export your work hours — without any cloud dependency.
+
+---
 
 ## Features
 
-- **Projekte & Aufgaben** – Anlegen, Bearbeiten, Löschen mit Farbcodierung und Kategorien
-- **Start/Stopp-Timer** – Echtzeit-Zeiterfassung mit Systembenachrichtigungen
-- **Manuelle Einträge** – Nachträgliches Erfassen mit Start, Ende, Notiz
-- **Tages-/Wochen-/Monatsansicht** – Filter nach Projekt, Kategorie, Suchbegriff
-- **Berichte** – Aufschlüsselung nach Projekt und Kategorie mit Balkendiagrammen
-- **Export** – CSV (Excel-kompatibel mit UTF-8 BOM) und PDF
-- **Erinnerungen** – Konfigurierbare Desktop-Benachrichtigungen
-- **Offline-first** – Alle Daten lokal (JSON-Dateien via Electron, localStorage im Browser)
+- **Projects & Tasks** — Create, edit, and archive projects and tasks with custom colors and categories (Development, Design, Meeting, Testing, Management, Research, and more)
+- **Live Timer** — Start/stop real-time tracking with desktop notifications
+- **Manual Entries** — Add or edit time entries retroactively with start time, end time, and notes
+- **Day / Week / Month View** — Browse entries with filters by project, category, and full-text search
+- **Reports** — Visual breakdowns of tracked time per project and category with bar charts
+- **Export** — Export to CSV (UTF-8 BOM for Excel compatibility) or PDF
+- **Reminders** — Configurable desktop notifications reminding you to log your time
+- **Offline-first** — All data is stored locally; no account or internet connection required
+- **Themes & i18n** — Dark/light theme, English and German interface
 
-## Schnellstart
+---
 
-### Entwicklung (Angular Dev Server + Electron)
+## Screenshots
+
+| Dashboard | Timer |
+|-----------|-------|
+| ![Dashboard](public/Track%20Hours%20Dashboard.png) | ![Timer](public/Track%20Hours%20Timer.png) |
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18 or later recommended)
+- npm (v9 or later)
+
+### Install dependencies
+
 ```bash
-npm run electron:dev
+npm install
 ```
 
-### Nur Angular Dev Server (Browser)
+### Run in the browser (Angular Dev Server)
+
 ```bash
 npm start
 ```
 
-### Produktion bauen + Electron packagen
+Open [http://localhost:4200](http://localhost:4200) in your browser.
+
+### Run as a desktop app (Angular + Electron)
+
+```bash
+npm run electron:dev
+```
+
+This starts the Angular dev server and launches Electron simultaneously.
+
+### Build for production
+
 ```bash
 npm run electron:build
 ```
 
-## Datenspeicherung
+Produces a packaged desktop app in the `release/` folder.
 
-Im Electron-Modus werden die Daten als JSON-Dateien im User-Data-Verzeichnis gespeichert:
-- Windows: `%APPDATA%\track-hours\track-hours-data\`
-- macOS: `~/Library/Application Support/track-hours/track-hours-data/`
-- Linux: `~/.config/track-hours/track-hours-data/`
+---
 
-## Architektur
+## Data Storage
+
+In Electron mode, all data is persisted as JSON files in the OS user data directory:
+
+| Platform | Path |
+|----------|------|
+| Windows  | `%APPDATA%\track-hours\track-hours-data\` |
+| macOS    | `~/Library/Application Support/track-hours/track-hours-data/` |
+| Linux    | `~/.config/track-hours/track-hours-data/` |
+
+In browser mode, data is stored in `localStorage`.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | Angular 21, TypeScript, Tailwind CSS |
+| Desktop shell | Electron 41 |
+| Translations | @ngx-translate |
+| Date utilities | date-fns |
+| PDF export | jsPDF + jspdf-autotable |
+| CSV export | PapaParse |
+| Packaging | electron-builder |
+
+---
+
+## Project Structure
 
 ```
 src/app/
-  models/           # Datenmodelle (Project, Task, TimeEntry, AppSettings)
+  models/           # Data models: Project, Task, TimeEntry, AppSettings
   services/         # StorageService, ProjectService, TimeEntryService, TimerService, ExportService
   shared/           # DurationPipe
   components/       # Sidebar
   pages/            # Dashboard, Timer, Projects, Entries, Reports, Settings
 electron/
-  main.js           # Electron Hauptprozess
+  main.js           # Electron main process
   preload.js        # Context Bridge (IPC)
+public/
+  i18n/             # Translation files (de.json, en.json)
 ```
 
+---
 
-## Development server
+## Contributing
 
-To start a local development server, run:
+Contributions, issues and feature requests are welcome. Feel free to open an issue or submit a pull request.
 
-```bash
-ng serve
-```
+---
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## License
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+This project is private and not yet licensed for public distribution.
