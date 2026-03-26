@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.2.3](https://github.com/ynnckrkn/track-hours/compare/track-hours-v0.2.2...track-hours-v0.2.3) (2026-03-25)
+
+
+### Bug Fixes
+
+* upload only Setup installer for Windows release assets ([b43c840](https://github.com/ynnckrkn/track-hours/commit/b43c840bad415071ed0790a459e57bf432e9290b))
+
 ## [0.2.2](https://github.com/ynnckrkn/track-hours/compare/track-hours-v0.2.1...track-hours-v0.2.2) (2026-03-25)
 
 
