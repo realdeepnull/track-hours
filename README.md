@@ -117,6 +117,36 @@ public/
 
 Contributions, issues and feature requests are welcome. Feel free to open an issue or submit a pull request.
 
+### Commit Convention
+
+This project follows the [Conventional Commits](https://www.conventionalcommits.org/) specification. All commit messages **must** adhere to this format:
+
+```
+<type>(<scope>): <short summary>
+```
+
+Common types:
+
+| Type | When to use |
+|------|-------------|
+| `feat` | A new feature |
+| `fix` | A bug fix |
+| `docs` | Documentation changes only |
+| `style` | Formatting, missing semi-colons, etc. (no logic change) |
+| `refactor` | Code change that is neither a fix nor a feature |
+| `test` | Adding or updating tests |
+| `chore` | Build process, tooling, or dependency updates |
+
+**Examples:**
+
+```
+feat(timer): add pause/resume support
+fix(export): correct UTF-8 BOM encoding for CSV
+docs(readme): add contributing section
+```
+
+> Conventional Commits are required because the changelog and release versioning are generated automatically from commit history via [Release Please](https://github.com/googleapis/release-please).
+
 ---
 
 ## License
