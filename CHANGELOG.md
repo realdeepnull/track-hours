@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.3.3](https://github.com/ynnckrkn/track-hours/compare/track-hours-v0.3.2...track-hours-v0.3.3) (2026-03-27)
+
+
+### Bug Fixes
+
+* upload latest.yml and blockmap files to GitHub releases for auto-updater ([ff62f20](https://github.com/ynnckrkn/track-hours/commit/ff62f20ee6474965b5171ac080fb43a3506d6b4c))
+
 ## [0.3.2](https://github.com/ynnckrkn/track-hours/compare/track-hours-v0.3.1...track-hours-v0.3.2) (2026-03-27)
 
 
