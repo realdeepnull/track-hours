@@ -37,7 +37,10 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.tag_name }}
-          files: release/**/*Setup*.exe
+          files: |
+            release/**/*Setup*.exe
+            release/**/*.blockmap
+            release/**/latest.yml
 
   build-linux:
     runs-on: ubuntu-latest
@@ -64,4 +67,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.tag_name }}
-          files: release/**/*.AppImage
+          files: |
+            release/**/*.AppImage
+            release/**/latest-linux.yml
