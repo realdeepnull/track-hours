@@ -141,8 +141,13 @@ app.whenReady().then(() => {
     mainWindow.webContents.send('update:downloaded');
   });
 
+  autoUpdater.on('download-progress', (progress) => {
+    mainWindow.webContents.send('update:progress', Math.round(progress.percent));
+  });
+
   autoUpdater.on('error', (err) => {
     console.error('autoUpdater error', err);
+    mainWindow.webContents.send('update:error', err.message);
   });
 
   app.on('activate', () => {

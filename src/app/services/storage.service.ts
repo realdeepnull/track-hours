@@ -12,6 +12,8 @@ declare global {
       isElectron: boolean;
       onUpdateAvailable: (callback: (version: string) => void) => void;
       onUpdateDownloaded: (callback: () => void) => void;
+      onUpdateError?: (callback: (message: string) => void) => void;
+      onUpdateProgress?: (callback: (percent: number) => void) => void;
       installUpdate: () => void;
     };
   }

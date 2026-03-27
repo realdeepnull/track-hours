@@ -2,7 +2,8 @@
   "update": {
     "available": "Downloading update {{version}}…",
     "ready": "Update ready - please restart.",
-    "restart": "Restart"
+    "restart": "Restart",
+    "error": "Update failed. Please download manually."
   },
   "APP": {
     "SUBTITLE": "Time Tracking"

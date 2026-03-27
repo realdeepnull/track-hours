@@ -21,13 +21,27 @@ import { UpdateService } from '../../services/update.service';
           {{ 'update.restart' | translate }}
         </button>
       </div>
+    } @else if (updateService.updateError()) {
+      <div
+        role="alert"
+        aria-live="assertive"
+        class="fixed bottom-4 right-4 z-50 flex items-center gap-3 rounded-xl bg-red-700 px-5 py-3 text-white shadow-lg"
+      >
+        <span class="text-sm font-medium">{{ 'update.error' | translate }}</span>
+      </div>
     } @else if (updateService.availableVersion()) {
       <div
         role="status"
         aria-live="polite"
-        class="fixed bottom-4 right-4 z-50 flex items-center gap-3 rounded-xl bg-slate-700 px-5 py-3 text-white shadow-lg"
+        class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 rounded-xl bg-slate-700 px-5 py-3 text-white shadow-lg"
       >
         <span class="text-sm">{{ 'update.available' | translate : { version: updateService.availableVersion() } }}</span>
+        @if (updateService.downloadPercent() !== null) {
+          <div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-500" role="progressbar" [attr.aria-valuenow]="updateService.downloadPercent()" aria-valuemin="0" aria-valuemax="100">
+            <div class="h-full rounded-full bg-indigo-400 transition-all duration-300" [style.width.%]="updateService.downloadPercent()"></div>
+          </div>
+          <span class="text-xs text-slate-400">{{ updateService.downloadPercent() }}%</span>
+        }
       </div>
     }
   `,

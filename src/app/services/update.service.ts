@@ -4,6 +4,8 @@ import { Injectable, signal } from '@angular/core';
 export class UpdateService {
   readonly availableVersion = signal<string | null>(null);
   readonly downloadReady = signal(false);
+  readonly updateError = signal<string | null>(null);
+  readonly downloadPercent = signal<number | null>(null);
 
   init(): void {
     const api = window.electronAPI;
@@ -15,6 +17,14 @@ export class UpdateService {
 
     api.onUpdateDownloaded(() => {
       this.downloadReady.set(true);
+    });
+
+    api.onUpdateError?.((message: string) => {
+      this.updateError.set(message);
+    });
+
+    api.onUpdateProgress?.((percent: number) => {
+      this.downloadPercent.set(percent);
     });
   }
 
