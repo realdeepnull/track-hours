@@ -1,4 +1,9 @@
 {
+  "update": {
+    "available": "Downloading update {{version}}…",
+    "ready": "Update ready - please restart.",
+    "restart": "Restart"
+  },
   "APP": {
     "SUBTITLE": "Time Tracking"
   },

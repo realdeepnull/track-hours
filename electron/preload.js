@@ -6,5 +6,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getDataDir: () => ipcRenderer.invoke('data:getDir'),
   notify: (title, body) => ipcRenderer.invoke('notify', title, body),
   exportSave: (filename, content) => ipcRenderer.invoke('export:save', filename, content),
+  onUpdateAvailable: (callback) => ipcRenderer.on('update:available', (_event, version) => callback(version)),
+  onUpdateDownloaded: (callback) => ipcRenderer.on('update:downloaded', () => callback()),
+  installUpdate: () => ipcRenderer.invoke('update:install'),
   isElectron: true,
 });
