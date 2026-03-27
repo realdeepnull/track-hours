@@ -6,6 +6,7 @@ import { TimeEntryService } from '../../services/time-entry.service';
 import { ProjectService } from '../../services/project.service';
 import { DurationPipe } from '../../shared/duration.pipe';
 import { IconComponent, IconName } from '../../shared/icon.component';
+import { version } from '../../../../package.json';
 
 @Component({
   selector: 'app-sidebar',
@@ -73,7 +74,7 @@ import { IconComponent, IconName } from '../../shared/icon.component';
 
       <!-- Footer -->
       <div class="px-5 py-4 border-t border-indigo-800 text-xs text-indigo-500">
-        Track Hours v0.1.0
+        Track Hours v{{ appVersion }}
       </div>
     </nav>
   `,
@@ -91,6 +92,8 @@ export class SidebarComponent {
     if (!running) return null;
     return this.projectService.getProject(running.projectId)?.name ?? null;
   });
+
+  readonly appVersion = version;
 
   readonly navItems: { path: string; label: string; exact?: boolean; icon: IconName }[] = [
     { path: '/dashboard', label: 'NAV.DASHBOARD', exact: true, icon: 'dashboard' },

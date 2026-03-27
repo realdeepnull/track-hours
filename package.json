@@ -31,7 +31,7 @@
     ],
     "win": {
       "target": "nsis",
-      "icon": "public/favicon256.ico"
+      "icon": "public/icon.ico"
     },
     "mac": {
       "target": "dmg",
@@ -39,7 +39,7 @@
     },
     "linux": {
       "target": "AppImage",
-      "icon": "public/favicon256.png"
+      "icon": "public/icon.png"
     },
     "publish": {
       "provider": "github",
