@@ -1,6 +1,6 @@
 {
   "name": "track-hours",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Moderne Zeiterfassung für Projekte und Aufgaben",
   "author": "Track Hours",
   "main": "electron/main.js",
