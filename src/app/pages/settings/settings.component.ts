@@ -4,6 +4,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { StorageService } from '../../services/storage.service';
 import { TimerService } from '../../services/timer.service';
 import { AppSettings, DEFAULT_SETTINGS } from '../../models/models';
+import { version } from '../../../../package.json';
 
 @Component({
   selector: 'app-settings',
@@ -127,7 +128,7 @@ import { AppSettings, DEFAULT_SETTINGS } from '../../models/models';
       <div
         class="bg-slate-800 rounded-xl border border-slate-700 p-5 text-sm text-slate-400 space-y-1"
       >
-        <div class="font-semibold text-slate-300">Track Hours v0.1.0</div>
+        <div class="font-semibold text-slate-300">Track Hours v{{ appVersion }}</div>
         <div>{{ 'SETTINGS.ABOUT_DESC' | translate }}</div>
         <div class="text-xs pt-2 text-slate-500">{{ 'SETTINGS.ABOUT_STORAGE' | translate }}</div>
       </div>
@@ -139,8 +140,10 @@ export class SettingsComponent implements OnInit {
   private readonly timerService = inject(TimerService);
   private readonly translateService = inject(TranslateService);
 
-  settings = signal<AppSettings>({ ...DEFAULT_SETTINGS });
-  saved = signal(false);
+  readonly settings = signal<AppSettings>({ ...DEFAULT_SETTINGS });
+  readonly saved = signal(false);
+
+  readonly appVersion = version;
 
   readonly languages: { value: 'de' | 'en'; label: string }[] = [
     { value: 'de', label: 'Deutsch' },
