@@ -1,6 +1,10 @@
 const { app, BrowserWindow, ipcMain, Notification, Menu } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
+
+autoUpdater.autoDownload = true;
+autoUpdater.autoInstallOnAppQuit = true;
 
 let mainWindow;
 const isDev = process.argv.includes('--dev');
@@ -25,7 +29,7 @@ function createWindow() {
     height: 800,
     minWidth: 900,
     minHeight: 600,
-    icon: path.join(__dirname, '../public/favicon256.png'),
+    icon: path.join(__dirname, '../public/favicon256.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -125,9 +129,29 @@ ipcMain.handle('export:save', (event, filename, content) => {
 app.whenReady().then(() => {
   createWindow();
 
+  if (!isDev) {
+    autoUpdater.checkForUpdates();
+  }
+
+  autoUpdater.on('update-available', (info) => {
+    mainWindow.webContents.send('update:available', info.version);
+  });
+
+  autoUpdater.on('update-downloaded', () => {
+    mainWindow.webContents.send('update:downloaded');
+  });
+
+  autoUpdater.on('error', (err) => {
+    console.error('autoUpdater error', err);
+  });
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
+});
+
+ipcMain.handle('update:install', () => {
+  autoUpdater.quitAndInstall();
 });
 
 app.on('window-all-closed', () => {

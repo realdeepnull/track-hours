@@ -10,6 +10,9 @@ declare global {
       notify: (title: string, body: string) => Promise<void>;
       exportSave: (filename: string, content: unknown) => Promise<{ success: boolean; filePath?: string }>;
       isElectron: boolean;
+      onUpdateAvailable: (callback: (version: string) => void) => void;
+      onUpdateDownloaded: (callback: () => void) => void;
+      installUpdate: () => void;
     };
   }
 }

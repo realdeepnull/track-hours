@@ -1,6 +1,8 @@
 <div class="flex h-screen bg-slate-900 text-slate-100 overflow-hidden">
   <app-sidebar />
-  <main class="flex-1 overflow-y-auto" id="main-content">
+  <main class="flex-1 overflow-y-auto relative" id="main-content">
     <router-outlet />
   </main>
 </div>
+
+<app-update-banner />
