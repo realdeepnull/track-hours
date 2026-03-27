@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.4.0](https://github.com/ynnckrkn/track-hours/compare/track-hours-v0.3.3...track-hours-v0.4.0) (2026-03-27)
+
+
+### Features
+
+* show download progress and error state in update banner ([69a5057](https://github.com/ynnckrkn/track-hours/commit/69a505791d03290f73767d89819a250311a85c67))
+
 ## [0.3.3](https://github.com/ynnckrkn/track-hours/compare/track-hours-v0.3.2...track-hours-v0.3.3) (2026-03-27)
 
 
