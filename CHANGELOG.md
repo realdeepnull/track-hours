@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.3.0](https://github.com/ynnckrkn/track-hours/compare/track-hours-v0.2.3...track-hours-v0.3.0) (2026-03-27)
+
+
+### Features
+
+* add auto update and update icon ([b6e933d](https://github.com/ynnckrkn/track-hours/commit/b6e933d9808836e1fdabe927eaa6f28c450e2256))
+
 ## [0.2.3](https://github.com/ynnckrkn/track-hours/compare/track-hours-v0.2.2...track-hours-v0.2.3) (2026-03-25)
 
 
