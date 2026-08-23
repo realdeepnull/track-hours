@@ -17,81 +17,60 @@ Whether you are a freelancer, developer, or anyone who needs to keep track of ho
 - **Reminders** — Configurable desktop notifications reminding you to log your time
 - **Offline-first** — All data is stored locally; no account or internet connection required
 - **Themes & i18n** — Dark/light theme, English and German interface
+- **Auto-Update** — Automatic updates via GitHub releases (Electron)
 
 ---
 
 ## Screenshots
 
-| Dashboard | Timer |
-|-----------|-------|
+| Dashboard                                          | Timer                                      |
+| -------------------------------------------------- | ------------------------------------------ |
 | ![Dashboard](public/Track%20Hours%20Dashboard.png) | ![Timer](public/Track%20Hours%20Timer.png) |
 
 ---
 
-## Getting Started
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (v18 or later recommended)
-- npm (v9 or later)
-
-### Install dependencies
+## Quick Start
 
 ```bash
 npm install
-```
-
-### Run in the browser (Angular Dev Server)
-
-```bash
-npm start
-```
-
-Open [http://localhost:4200](http://localhost:4200) in your browser.
-
-### Run as a desktop app (Angular + Electron)
-
-```bash
 npm run electron:dev
 ```
 
-This starts the Angular dev server and launches Electron simultaneously.
+This installs dependencies and launches the app as a desktop window (Angular dev server + Electron).
 
-### Build for production
+> Prefer the browser? Run `npm start` and open [http://localhost:4200](http://localhost:4200).
 
-```bash
-npm run electron:build
-```
-
-Produces a packaged desktop app in the `release/` folder.
-
----
-
-## Data Storage
-
-In Electron mode, all data is persisted as JSON files in the OS user data directory:
-
-| Platform | Path |
-|----------|------|
-| Windows  | `%APPDATA%\track-hours\track-hours-data\` |
-| macOS    | `~/Library/Application Support/track-hours/track-hours-data/` |
-| Linux    | `~/.config/track-hours/track-hours-data/` |
-
-In browser mode, data is stored in `localStorage`.
+Full setup, scripts, and troubleshooting: **[Getting Started](docs/getting-started.md)**
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | Angular 21, TypeScript, Tailwind CSS |
-| Desktop shell | Electron 41 |
-| Translations | @ngx-translate |
-| Date utilities | date-fns |
-| PDF export | jsPDF + jspdf-autotable |
-| CSV export | PapaParse |
-| Packaging | electron-builder |
+| Layer          | Technology                           |
+| -------------- | ------------------------------------ |
+| Frontend       | Angular 22, TypeScript, Tailwind CSS |
+| Desktop shell  | Electron 43                          |
+| State          | Angular Signals                      |
+| Translations   | @ngx-translate                       |
+| Date utilities | date-fns                             |
+| PDF export     | jsPDF + jspdf-autotable              |
+| CSV export     | PapaParse                            |
+| Packaging      | electron-builder                     |
+| Testing        | Vitest                               |
+| Linting        | ESLint + angular-eslint              |
+
+---
+
+## Documentation
+
+All documentation lives in the [`docs/`](docs) folder:
+
+| Document                                   | Audience           | Contents                                                                |
+| ------------------------------------------ | ------------------ | ----------------------------------------------------------------------- |
+| [Getting Started](docs/getting-started.md) | Everyone           | Prerequisites, installation, running, building, available scripts       |
+| [Development Guide](docs/development.md)   | Developers         | Architecture, project structure, state management, Electron IPC, models |
+| [Contributing](docs/contributing.md)       | Contributors       | Workflow, commit conventions, code style, testing, releases             |
+| [Data Storage](docs/data-storage.md)       | Developers / Users | Persistence model, file locations, export pipeline                      |
 
 ---
 
@@ -99,60 +78,52 @@ In browser mode, data is stored in `localStorage`.
 
 ```
 src/app/
-  models/           # Data models: Project, Task, TimeEntry, AppSettings
-  services/         # StorageService, ProjectService, TimeEntryService, TimerService, ExportService
-  shared/           # DurationPipe
-  components/       # Sidebar
-  pages/            # Dashboard, Timer, Projects, Entries, Reports, Settings
+  models/            # Data models: Project, Task, TimeEntry, AppSettings
+  services/          # StorageService, ProjectService, TimeEntryService,
+                     #   TimerService, ExportService, UpdateService
+  shared/            # DurationPipe, IconComponent
+  components/        # Sidebar, UpdateBanner
+  pages/             # Dashboard, Timer, Projects, Entries, Reports, Settings
 electron/
-  main.js           # Electron main process
-  preload.js        # Context Bridge (IPC)
+  main.js           # Electron main process (window, IPC, auto-updater)
+  preload.js         # Context bridge (secure IPC API)
 public/
   i18n/             # Translation files (de.json, en.json)
+docs/               # Project documentation
 ```
+
+See the [Development Guide](docs/development.md) for the full architecture breakdown.
+
+---
+
+## Data Storage
+
+Track Hours is offline-first. In Electron mode, data is persisted as JSON files in the OS user data directory; in browser mode, data uses `localStorage`.
+
+| Platform | Path                                                          |
+| -------- | ------------------------------------------------------------- |
+| Windows  | `%APPDATA%\track-hours\track-hours-data\`                     |
+| macOS    | `~/Library/Application Support/track-hours/track-hours-data/` |
+| Linux    | `~/.config/track-hours/track-hours-data/`                     |
+
+Details: **[Data Storage](docs/data-storage.md)**
 
 ---
 
 ## Contributing
 
-Contributions, issues and feature requests are welcome. Feel free to open an issue or submit a pull request.
+Contributions, issues, and feature requests are welcome. This project follows [Conventional Commits](https://www.conventionalcommits.org/), and releases are automated via [Release Please](https://github.com/googleapis/release-please).
 
-### Commit Convention
-
-This project follows the [Conventional Commits](https://www.conventionalcommits.org/) specification. All commit messages **must** adhere to this format:
-
-```
-<type>(<scope>): <short summary>
+```bash
+git checkout -b feat/my-feature
+npm run lint
+npm test
 ```
 
-Common types:
-
-| Type | When to use |
-|------|-------------|
-| `feat` | A new feature |
-| `fix` | A bug fix |
-| `docs` | Documentation changes only |
-| `style` | Formatting, missing semi-colons, etc. (no logic change) |
-| `refactor` | Code change that is neither a fix nor a feature |
-| `test` | Adding or updating tests |
-| `chore` | Build process, tooling, or dependency updates |
-
-**Examples:**
-
-```
-feat(timer): add pause/resume support
-fix(export): correct UTF-8 BOM encoding for CSV
-docs(readme): add contributing section
-```
-
-> Conventional Commits are required because the changelog and release versioning are generated automatically from commit history via [Release Please](https://github.com/googleapis/release-please).
+Full workflow, code style, and conventions: **[Contributing](docs/CONTRIBUTING.md)**
 
 ---
 
 ## License
 
 This project is licensed under the **MIT License (Non-Commercial)** — see the [LICENSE](LICENSE) file for details.
-
-- Free to use and share for non-commercial purposes
-- May not be sold or included in commercial products or services
-- Modified versions must carry the same license terms
