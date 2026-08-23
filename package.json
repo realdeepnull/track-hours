@@ -1,7 +1,7 @@
 {
   "name": "track-hours",
   "version": "0.4.0",
-  "description": "Moderne Zeiterfassung für Projekte und Aufgaben",
+  "description": "Modern time tracking for projects and tasks.",
   "author": "Track Hours",
   "main": "electron/main.js",
   "scripts": {
@@ -15,37 +15,6 @@
     "electron:start": "electron electron/main.js",
     "electron:run": "ng build --configuration electron && electron electron/main.js",
     "lint": "ng lint"
-  },
-  "build": {
-    "appId": "com.trackhours.app",
-    "productName": "Track Hours",
-    "directories": {
-      "output": "release"
-    },
-    "files": [
-      "dist/**/*",
-      "electron/**/*",
-      "public/**/*",
-      "node_modules/**/*",
-      "package.json"
-    ],
-    "win": {
-      "target": "nsis",
-      "icon": "public/icon.ico"
-    },
-    "mac": {
-      "target": "dmg",
-      "category": "public.app-category.productivity"
-    },
-    "linux": {
-      "target": "AppImage",
-      "icon": "public/icon.png"
-    },
-    "publish": {
-      "provider": "github",
-      "owner": "realdeepnull",
-      "repo": "track-hours"
-    }
   },
   "private": true,
   "packageManager": "npm@11.7.0",

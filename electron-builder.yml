@@ -1,0 +1,55 @@
+appId: com.trackhours.app
+productName: Track Hours
+copyright: Copyright © ${author}
+directories:
+  output: release
+
+# Asar packaging for the renderer + electron main process.
+asar: true
+
+# App source shipped inside the archive.
+files:
+  - "dist/**/*"
+  - "electron/**/*"
+  - "public/**/*"
+  - "package.json"
+
+# ---------------------------------------------------------------------------
+# Windows
+# ---------------------------------------------------------------------------
+win:
+  target: nsis
+  icon: public/icon.ico
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  deleteAppDataOnUninstall: false
+
+# ---------------------------------------------------------------------------
+# Linux
+# ---------------------------------------------------------------------------
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+        - arm64
+  category: Office
+  icon: public/icon.png
+  desktop:
+    entry:
+      MimeType: "x-scheme-handler/trackhours"
+      Keywords: "time;tracking;timer;productivity;"
+
+# ---------------------------------------------------------------------------
+# Publishing
+# ---------------------------------------------------------------------------
+publish:
+  provider: github
+  owner: realdeepnull
+  repo: track-hours
+  releaseType: draft

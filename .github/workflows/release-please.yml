@@ -38,13 +38,15 @@ jobs:
         run: npm ci
 
       - name: Build Angular + Electron (Windows)
-        run: npm run electron:build
+        # --publish never: electron-builder only builds; the release upload
+        # is handled separately by softprops/action-gh-release below to avoid
+        # duplicate/conflicting uploads.
+        run: npm run electron:build -- --publish never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Optional: SignPath.io Code Signing (OSS-Programm)
           # CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
           # CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_PASSWORD }}
-          WIN_TARGET: nsis
 
       - name: Upload Windows installer to release
         uses: softprops/action-gh-release@v2
@@ -74,7 +76,9 @@ jobs:
         run: sudo apt-get install -y rpm
 
       - name: Build Angular + Electron (Linux)
-        run: npm run electron:build
+        # --publish never: electron-builder only builds; the release upload
+        # is handled separately by softprops/action-gh-release below.
+        run: npm run electron:build -- --publish never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
