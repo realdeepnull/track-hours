@@ -59,7 +59,12 @@
                 }
               ],
               "outputHashing": "all",
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "inlineCritical": false
+                }
+              },
               "extractLicenses": true
             },
             "development": {
