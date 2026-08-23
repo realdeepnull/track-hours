@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ProjectService } from '../../services/project.service';
@@ -10,7 +10,6 @@ type DialogMode = 'project' | 'task' | null;
 @Component({
   selector: 'app-projects',
   imports: [FormsModule, TranslatePipe, IconComponent],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="p-6 max-w-5xl mx-auto space-y-6">
       <div class="flex items-center justify-between">

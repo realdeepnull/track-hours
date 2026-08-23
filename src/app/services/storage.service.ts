@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Service, signal } from '@angular/core';
 import { AppSettings, DEFAULT_SETTINGS, Project, Task, TimeEntry } from '../models/models';
 
 declare global {
@@ -33,7 +33,7 @@ const LS_KEYS = {
   settings: 'th_settings',
 } as const;
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class StorageService {
   private readonly isElectron = typeof window !== 'undefined' && !!window.electronAPI?.isElectron;
 

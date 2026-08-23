@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { StorageService } from '../../services/storage.service';
@@ -9,7 +9,6 @@ import { version } from '../../../../package.json';
 @Component({
   selector: 'app-settings',
   imports: [FormsModule, TranslatePipe],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="p-6 max-w-2xl mx-auto space-y-6">
       <h1 class="text-2xl font-bold text-slate-100">{{ 'SETTINGS.TITLE' | translate }}</h1>
@@ -151,13 +150,11 @@ export class SettingsComponent implements OnInit {
   ];
 
   async ngOnInit(): Promise<void> {
-    const s = await this.storageService.loadSettings();
+    // Settings were already loaded by App component; sync the local form signal.
+    const s = this.storageService.settings();
     const language =
       s.language ?? this.translateService.getCurrentLang() ?? DEFAULT_SETTINGS.language;
     this.settings.set({ ...DEFAULT_SETTINGS, ...s, language });
-    if (s.reminderEnabled) {
-      this.timerService.setupReminders(s.reminderIntervalMinutes);
-    }
   }
 
   toggle(key: 'reminderEnabled' | 'autoSuggestLastUsed'): void {

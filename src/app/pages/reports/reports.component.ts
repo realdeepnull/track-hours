@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TimeEntryService } from '../../services/time-entry.service';
@@ -11,7 +11,6 @@ import { format, startOfMonth, endOfMonth, subMonths } from 'date-fns';
 @Component({
   selector: 'app-reports',
   imports: [FormsModule, DurationPipe, TranslatePipe],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="p-6 max-w-5xl mx-auto space-y-6">
       <div class="flex items-center justify-between">

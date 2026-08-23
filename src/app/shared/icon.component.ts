@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 export type IconName =
   | 'logo'
@@ -18,7 +18,6 @@ export type IconName =
 
 @Component({
   selector: 'app-icon',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   // prettier-ignore
   template: `
     @switch (name()) {

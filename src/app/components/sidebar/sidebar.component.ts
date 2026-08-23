@@ -1,4 +1,4 @@
-﻿import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+﻿import { Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TimerService } from '../../services/timer.service';
@@ -11,7 +11,6 @@ import { version } from '../../../../package.json';
 @Component({
   selector: 'app-sidebar',
   imports: [RouterLink, RouterLinkActive, DurationPipe, TranslatePipe, IconComponent],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <nav
       class="flex flex-col h-full bg-indigo-950 text-indigo-100 w-64 min-w-[16rem] select-none"

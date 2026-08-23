@@ -1,8 +1,8 @@
-import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
+import { Service, OnDestroy, computed, inject, signal } from '@angular/core';
 import { TimeEntryService } from './time-entry.service';
 import { StorageService } from './storage.service';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class TimerService implements OnDestroy {
   private readonly timeEntryService = inject(TimeEntryService);
   private readonly storage = inject(StorageService);

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -11,7 +11,6 @@ import { IconComponent } from '../../shared/icon.component';
 @Component({
   selector: 'app-timer',
   imports: [FormsModule, DurationPipe, TranslatePipe, IconComponent],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="p-6 max-w-2xl mx-auto space-y-6">
       <h1 class="text-2xl font-bold text-slate-100">{{ 'TIMER.TITLE' | translate }}</h1>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TimeEntryService } from '../../services/time-entry.service';
@@ -18,7 +18,6 @@ type ViewMode = 'day' | 'week' | 'month';
 @Component({
   selector: 'app-entries',
   imports: [FormsModule, DurationPipe, TranslatePipe, IconComponent],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="p-6 max-w-6xl mx-auto space-y-5">
       <!-- Header -->

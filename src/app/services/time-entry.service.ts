@@ -1,9 +1,9 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Service, computed, inject, signal } from '@angular/core';
 import { TimeEntry } from '../models/models';
 import { StorageService } from './storage.service';
 import { v4 as uuidv4 } from 'uuid';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class TimeEntryService {
   private readonly storage = inject(StorageService);
 

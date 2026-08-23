@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -14,7 +14,6 @@ import { de } from 'date-fns/locale';
 @Component({
   selector: 'app-dashboard',
   imports: [RouterLink, DurationPipe, TranslatePipe],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="p-6 max-w-6xl mx-auto space-y-6">
       <!-- Header -->

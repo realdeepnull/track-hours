@@ -1,6 +1,6 @@
-import { Injectable, signal } from '@angular/core';
+import { Service, signal } from '@angular/core';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class UpdateService {
   readonly availableVersion = signal<string | null>(null);
   readonly downloadReady = signal(false);

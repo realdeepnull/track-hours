@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { UpdateService } from '../../services/update.service';
 
 @Component({
   selector: 'app-update-banner',
   imports: [TranslatePipe],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (updateService.downloadReady()) {
       <div

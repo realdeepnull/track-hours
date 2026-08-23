@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
@@ -14,7 +14,6 @@ import { UpdateService } from './services/update.service';
   imports: [RouterOutlet, SidebarComponent, UpdateBannerComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App implements OnInit {
   private readonly projectService = inject(ProjectService);
@@ -31,6 +30,9 @@ export class App implements OnInit {
       this.timeEntryService.init(),
     ]);
     this.translateService.use(settings.language ?? 'de');
+    if (settings.reminderEnabled) {
+      this.timerService.setupReminders(settings.reminderIntervalMinutes);
+    }
     this.updateService.init();
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Service, inject } from '@angular/core';
 import { TimeEntry, Project, Task, TASK_CATEGORIES } from '../models/models';
 import { StorageService } from './storage.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -7,7 +7,7 @@ import { de, enUS } from 'date-fns/locale';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ExportService {
   private readonly storage = inject(StorageService);
   private readonly translate = inject(TranslateService);
