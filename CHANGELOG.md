@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.6.2](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.6.1...track-hours-v0.6.2) (2026-08-23)
+
+
+### Bug Fixes
+
+* generate multi-size icon.ico for correct Windows taskbar display ([fd98b5a](https://github.com/realdeepnull/track-hours/commit/fd98b5ae0af8d3fdb0482d85dc20168798b9d916))
+
 ## [0.6.1](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.6.0...track-hours-v0.6.1) (2026-08-23)
 
 
