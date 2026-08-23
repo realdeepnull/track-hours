@@ -31,6 +31,11 @@ body {
   background-color: #0f172a;
 }
 
+/* Modern squircle corners for all elements */
+* {
+  corner-shape: squircle;
+}
+
 app-icon {
   display: inline-flex;
 }

@@ -34,13 +34,13 @@ import { IconComponent } from '../../shared/icon.component';
         @if (!isRunning()) {
           <button (click)="startTimer()"
             [disabled]="!selectedProjectId() || !selectedTaskId()"
-            class="inline-flex items-center gap-2 px-10 py-4 rounded-full text-lg font-semibold bg-indigo-600 hover:bg-indigo-500 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-indigo-500/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
+            class="inline-flex items-center gap-2 px-10 py-4 rounded-2xl text-lg font-semibold bg-indigo-600 hover:bg-indigo-500 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-indigo-500/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
             <app-icon name="play" class="size-5" />
             {{ 'TIMER.START' | translate }}
           </button>
         } @else {
           <button (click)="stopTimer()"
-            class="inline-flex items-center gap-2 px-10 py-4 rounded-full text-lg font-semibold bg-rose-600 hover:bg-rose-500 text-white transition-all shadow-lg shadow-rose-500/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-400">
+            class="inline-flex items-center gap-2 px-10 py-4 rounded-2xl text-lg font-semibold bg-rose-600 hover:bg-rose-500 text-white transition-all shadow-lg shadow-rose-500/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-400">
             <app-icon name="stop" class="size-5" />
             {{ 'TIMER.STOP' | translate }}
           </button>
