@@ -4,6 +4,9 @@ copyright: Copyright © ${author}
 directories:
   output: release
 
+# Maximum compression for smaller installers (slower build, smaller exe).
+compression: maximum
+
 # Asar packaging for the renderer + electron main process.
 asar: true
 
@@ -13,6 +16,15 @@ files:
   - "electron/**/*"
   - "public/**/*"
   - "package.json"
+  - "!**/*.{md,markdown,map}"
+  - "!**/{test,tests,__tests__,docs,doc,examples,example,.bin}/**"
+  - "!**/.npmignore"
+  - "!**/.eslintrc"
+  - "!**/.editorconfig"
+
+# Remove package.json fields that are only needed at dev time.
+removePackageScripts: true
+removePackageKeywords: true
 
 # ---------------------------------------------------------------------------
 # Windows
