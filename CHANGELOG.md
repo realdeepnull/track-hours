@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.6.1](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.6.0...track-hours-v0.6.1) (2026-08-23)
+
+
+### Bug Fixes
+
+* **electron:** disable critical CSS inlining for correct styling under file:// ([435404a](https://github.com/realdeepnull/track-hours/commit/435404a90fed7b74b13bae7d4bc8ae27a3d46654))
+* **electron:** exclude renderer dependencies from asar to reduce installer size ([928a1de](https://github.com/realdeepnull/track-hours/commit/928a1de4659df5f4f60bb8dc0ac4a0df932b3249))
+
 ## [0.6.0](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.5.0...track-hours-v0.6.0) (2026-08-23)
 
 
