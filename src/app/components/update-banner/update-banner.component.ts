@@ -10,12 +10,12 @@ import { UpdateService } from '../../services/update.service';
       <div
         role="status"
         aria-live="polite"
-        class="fixed bottom-4 right-4 z-50 flex items-center gap-3 rounded-xl bg-indigo-600 px-5 py-3 text-white shadow-lg"
+        class="fixed bottom-4 right-4 z-50 flex items-center gap-3 rounded-xl bg-white dark:bg-slate-800 px-5 py-3 text-slate-900 dark:text-slate-100 shadow-lg shadow-slate-300/50 dark:shadow-slate-900/50 border border-slate-200 dark:border-slate-700"
       >
         <span class="text-sm font-medium">{{ 'update.ready' | translate }}</span>
         <button
           (click)="updateService.install()"
-          class="rounded-lg bg-white px-3 py-1 text-sm font-semibold text-indigo-700 hover:bg-indigo-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+          class="rounded-lg bg-indigo-600 px-3 py-1 text-sm font-semibold text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400"
         >
           {{ 'update.restart' | translate }}
         </button>
@@ -24,7 +24,7 @@ import { UpdateService } from '../../services/update.service';
       <div
         role="alert"
         aria-live="assertive"
-        class="fixed bottom-4 right-4 z-50 flex items-center gap-3 rounded-xl bg-red-700 px-5 py-3 text-white shadow-lg"
+        class="fixed bottom-4 right-4 z-50 flex items-center gap-3 rounded-xl bg-rose-600 px-5 py-3 text-white shadow-lg shadow-rose-300/50"
       >
         <span class="text-sm font-medium">{{ 'update.error' | translate }}</span>
       </div>
@@ -32,14 +32,14 @@ import { UpdateService } from '../../services/update.service';
       <div
         role="status"
         aria-live="polite"
-        class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 rounded-xl bg-slate-700 px-5 py-3 text-white shadow-lg"
+        class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 rounded-xl bg-white dark:bg-slate-800 px-5 py-3 text-slate-900 dark:text-slate-100 shadow-lg shadow-slate-300/50 dark:shadow-slate-900/50 border border-slate-200 dark:border-slate-700"
       >
         <span class="text-sm">{{ 'update.available' | translate : { version: updateService.availableVersion() } }}</span>
         @if (updateService.downloadPercent() !== null) {
-          <div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-500" role="progressbar" [attr.aria-valuenow]="updateService.downloadPercent()" aria-valuemin="0" aria-valuemax="100">
-            <div class="h-full rounded-full bg-indigo-400 transition-all duration-300" [style.width.%]="updateService.downloadPercent()"></div>
+          <div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700" role="progressbar" [attr.aria-valuenow]="updateService.downloadPercent()" aria-valuemin="0" aria-valuemax="100">
+            <div class="h-full rounded-full bg-indigo-500 transition-all duration-300" [style.width.%]="updateService.downloadPercent()"></div>
           </div>
-          <span class="text-xs text-slate-400">{{ updateService.downloadPercent() }}%</span>
+          <span class="text-xs text-slate-500 dark:text-slate-400">{{ updateService.downloadPercent() }}%</span>
         }
       </div>
     }

@@ -5,6 +5,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { UpdateBannerComponent } from './components/update-banner/update-banner.component';
 import { ProjectService } from './services/project.service';
 import { StorageService } from './services/storage.service';
+import { ThemeService } from './services/theme.service';
 import { TimeEntryService } from './services/time-entry.service';
 import { TimerService } from './services/timer.service';
 import { UpdateService } from './services/update.service';
@@ -20,6 +21,7 @@ export class App implements OnInit {
   private readonly storageService = inject(StorageService);
   private readonly timeEntryService = inject(TimeEntryService);
   private readonly timerService = inject(TimerService);
+  private readonly themeService = inject(ThemeService);
   private readonly translateService = inject(TranslateService);
   private readonly updateService = inject(UpdateService);
 
@@ -30,6 +32,7 @@ export class App implements OnInit {
       this.timeEntryService.init(),
     ]);
     this.translateService.use(settings.language ?? 'de');
+    this.themeService.setTheme(settings.theme ?? 'light');
     if (settings.reminderEnabled) {
       this.timerService.setupReminders(settings.reminderIntervalMinutes);
     }

@@ -11,18 +11,18 @@ type DialogMode = 'project' | 'task' | null;
   selector: 'app-projects',
   imports: [FormsModule, TranslatePipe, IconComponent],
   template: `
-    <div class="p-6 max-w-5xl mx-auto space-y-6">
+    <div class="p-6 lg:p-8 max-w-5xl mx-auto space-y-6">
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-slate-100">{{ 'PROJECTS.TITLE' | translate }}</h1>
+        <h1 class="text-2xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">{{ 'PROJECTS.TITLE' | translate }}</h1>
         <button (click)="openProjectDialog()"
-          class="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
+          class="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors shadow-sm shadow-indigo-500/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
           <span aria-hidden="true">+</span> {{ 'PROJECTS.NEW_PROJECT' | translate }}
         </button>
       </div>
 
       <!-- Project list -->
       @if (projects().length === 0) {
-        <div class="text-center py-20 text-slate-500">
+        <div class="text-center py-20 text-slate-400 dark:text-slate-500">
           <p class="text-lg">{{ 'PROJECTS.NO_PROJECTS' | translate }}</p>
           <p class="text-sm mt-1">{{ 'PROJECTS.NO_PROJECTS_HINT' | translate }}</p>
         </div>
@@ -30,42 +30,42 @@ type DialogMode = 'project' | 'task' | null;
 
       <div class="space-y-4">
         @for (project of projects(); track project.id) {
-          <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+          <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm shadow-slate-200/50 dark:shadow-none overflow-hidden">
             <!-- Project header -->
             <div class="flex items-center gap-4 px-5 py-4">
               <div class="w-4 h-4 rounded-full shrink-0" [style.background-color]="project.color"></div>
               <div class="flex-1 min-w-0">
-                <div class="font-semibold text-slate-100">{{ project.name }}</div>
+                <div class="font-semibold text-slate-900 dark:text-slate-100">{{ project.name }}</div>
                 @if (project.description) {
-                  <div class="text-xs text-slate-400 mt-0.5">{{ project.description }}</div>
+                  <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ project.description }}</div>
                 }
               </div>
               <div class="flex items-center gap-2 shrink-0">
-                <span class="text-xs text-slate-500">{{ 'PROJECTS.TASK_COUNT' | translate: { count: taskCount(project.id) } }}</span>
+                <span class="text-xs text-slate-400 dark:text-slate-500">{{ 'PROJECTS.TASK_COUNT' | translate: { count: taskCount(project.id) } }}</span>
                 <button (click)="openTaskDialog(project.id)"
-                  class="px-3 py-1.5 rounded-md bg-slate-700 hover:bg-slate-600 text-xs text-slate-200 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
+                  class="px-3 py-1.5 rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-xs text-slate-700 dark:text-slate-300 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
                   {{ 'PROJECTS.ADD_TASK' | translate }}
                 </button>
                 <button (click)="openEditProjectDialog(project)"
-                  class="p-1.5 rounded-md text-slate-400 hover:text-slate-200 hover:bg-slate-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400"
+                  class="p-1.5 rounded-md text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400"
                   [attr.aria-label]="'PROJECTS.EDIT_PROJECT_LABEL' | translate">
                   <app-icon name="edit" class="w-4 h-4" />
                 </button>
                 @if (confirmDeleteProjectId() === project.id) {
-                  <span class="text-xs text-rose-400">{{ 'PROJECTS.CONFIRM_DELETE' | translate }}</span>
+                  <span class="text-xs text-rose-600">{{ 'PROJECTS.CONFIRM_DELETE' | translate }}</span>
                   <button (click)="archiveProject(project.id)"
                     class="px-2 py-1 rounded text-xs bg-rose-600 hover:bg-rose-500 text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-400"
                     [attr.aria-label]="'COMMON.CONFIRM' | translate">
                     {{ 'COMMON.YES' | translate }}
                   </button>
                   <button (click)="confirmDeleteProjectId.set(null)"
-                    class="px-2 py-1 rounded text-xs bg-slate-600 hover:bg-slate-500 text-slate-200 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400"
+                    class="px-2 py-1 rounded text-xs bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500 text-slate-700 dark:text-slate-200 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400"
                     [attr.aria-label]="'COMMON.CANCEL' | translate">
                     {{ 'COMMON.NO' | translate }}
                   </button>
                 } @else {
                   <button (click)="confirmDeleteProjectId.set(project.id)"
-                    class="p-1.5 rounded-md text-slate-400 hover:text-rose-400 hover:bg-rose-950/40 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-400"
+                    class="p-1.5 rounded-md text-slate-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-400"
                     [attr.aria-label]="'PROJECTS.DELETE_PROJECT_LABEL' | translate">
                     <app-icon name="trash" class="w-4 h-4" />
                   </button>
@@ -75,7 +75,7 @@ type DialogMode = 'project' | 'task' | null;
 
             <!-- Task list -->
             @if (taskCount(project.id) > 0) {
-              <ul class="border-t border-slate-700 divide-y divide-slate-700/50" role="list">
+              <ul class="border-t border-slate-100 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-700" role="list">
                 @for (task of projectTasks(project.id); track task.id) {
                   <li class="flex items-center gap-3 px-5 py-2.5">
                     <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
@@ -83,12 +83,12 @@ type DialogMode = 'project' | 'task' | null;
                       [style.color]="getCategoryColor(task.category)">
                       {{ getCategoryLabel(task.category) }}
                     </span>
-                    <span class="flex-1 text-sm text-slate-300">{{ task.name }}</span>
+                    <span class="flex-1 text-sm text-slate-700 dark:text-slate-200">{{ task.name }}</span>
                     @if (task.description) {
-                      <span class="text-xs text-slate-500 truncate max-w-xs">{{ task.description }}</span>
+                      <span class="text-xs text-slate-400 dark:text-slate-500 truncate max-w-xs">{{ task.description }}</span>
                     }
                     <button (click)="archiveTask(task.id)"
-                      class="p-1 rounded text-slate-500 hover:text-rose-400 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-400"
+                      class="p-1 rounded text-slate-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-400"
                       [attr.aria-label]="'PROJECTS.DELETE_TASK_LABEL' | translate">
                       <app-icon name="close" class="w-3.5 h-3.5" />
                     </button>
@@ -103,31 +103,31 @@ type DialogMode = 'project' | 'task' | null;
 
     <!-- Project Dialog -->
     @if (dialogMode() === 'project') {
-      <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+      <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-sm"
         role="dialog" aria-modal="true" [attr.aria-label]="(editingProjectId() ? 'PROJECTS.EDIT_PROJECT' : 'PROJECTS.NEW_PROJECT') | translate">
-        <div class="bg-slate-800 rounded-2xl border border-slate-700 w-full max-w-md shadow-2xl p-6 space-y-4">
-          <h2 class="text-lg font-semibold text-slate-100">{{ (editingProjectId() ? 'PROJECTS.EDIT_PROJECT' : 'PROJECTS.NEW_PROJECT') | translate }}</h2>
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 w-full max-w-md shadow-xl shadow-slate-300/40 dark:shadow-slate-900/40 p-6 space-y-4">
+          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ (editingProjectId() ? 'PROJECTS.EDIT_PROJECT' : 'PROJECTS.NEW_PROJECT') | translate }}</h2>
 
           <div class="space-y-1.5">
-            <label for="proj-name" class="text-sm text-slate-300">{{ 'PROJECTS.NAME' | translate }} *</label>
+            <label for="proj-name" class="text-sm text-slate-700 dark:text-slate-200">{{ 'PROJECTS.NAME' | translate }} *</label>
             <input id="proj-name" [ngModel]="formName()" (ngModelChange)="formName.set($event)" type="text" [placeholder]="'PROJECTS.NAME_PLACEHOLDER' | translate"
-              class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
+              class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
           </div>
 
           <div class="space-y-1.5">
-            <label for="proj-desc" class="text-sm text-slate-300">{{ 'PROJECTS.DESCRIPTION' | translate }}</label>
+            <label for="proj-desc" class="text-sm text-slate-700 dark:text-slate-200">{{ 'PROJECTS.DESCRIPTION' | translate }}</label>
             <textarea id="proj-desc" [ngModel]="formDescription()" (ngModelChange)="formDescription.set($event)" rows="2" [placeholder]="'ENTRIES.OPTIONAL' | translate"
-              class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+              class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
           </div>
 
           <div class="space-y-1.5">
-            <span class="text-sm text-slate-300">{{ 'PROJECTS.COLOR' | translate }}</span>
+            <span class="text-sm text-slate-700 dark:text-slate-200">{{ 'PROJECTS.COLOR' | translate }}</span>
             <div class="flex flex-wrap gap-2">
               @for (color of projectColors; track color) {
                 <button (click)="formColor.set(color)"
-                  class="w-7 h-7 rounded-full transition-transform hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+                  class="w-7 h-7 rounded-full transition-transform hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400"
                   [style.background-color]="color"
-                  [class]="formColor() === color ? 'ring-2 ring-white ring-offset-2 ring-offset-slate-800' : ''"
+                  [class]="formColor() === color ? 'ring-2 ring-indigo-400 ring-offset-2 ring-offset-white dark:ring-offset-slate-800' : ''"
                   [attr.aria-label]="'Farbe ' + color"
                   [attr.aria-pressed]="formColor() === color">
                 </button>
@@ -141,7 +141,7 @@ type DialogMode = 'project' | 'task' | null;
               {{ 'COMMON.SAVE' | translate }}
             </button>
             <button (click)="closeDialog()"
-              class="flex-1 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400">
+              class="flex-1 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400">
               {{ 'COMMON.CANCEL' | translate }}
             </button>
           </div>
@@ -151,21 +151,21 @@ type DialogMode = 'project' | 'task' | null;
 
     <!-- Task Dialog -->
     @if (dialogMode() === 'task') {
-      <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+      <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-sm"
         role="dialog" aria-modal="true" [attr.aria-label]="'PROJECTS.NEW_TASK' | translate">
-        <div class="bg-slate-800 rounded-2xl border border-slate-700 w-full max-w-md shadow-2xl p-6 space-y-4">
-          <h2 class="text-lg font-semibold text-slate-100">{{ 'PROJECTS.NEW_TASK' | translate }}</h2>
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 w-full max-w-md shadow-xl shadow-slate-300/40 dark:shadow-slate-900/40 p-6 space-y-4">
+          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ 'PROJECTS.NEW_TASK' | translate }}</h2>
 
           <div class="space-y-1.5">
-            <label for="task-name" class="text-sm text-slate-300">{{ 'PROJECTS.NAME' | translate }} *</label>
+            <label for="task-name" class="text-sm text-slate-700 dark:text-slate-200">{{ 'PROJECTS.NAME' | translate }} *</label>
             <input id="task-name" [ngModel]="formName()" (ngModelChange)="formName.set($event)" type="text" [placeholder]="'PROJECTS.TASK_NAME' | translate"
-              class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
+              class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
           </div>
 
           <div class="space-y-1.5">
-            <label for="task-cat" class="text-sm text-slate-300">{{ 'PROJECTS.TASK_CATEGORY' | translate }}</label>
+            <label for="task-cat" class="text-sm text-slate-700 dark:text-slate-200">{{ 'PROJECTS.TASK_CATEGORY' | translate }}</label>
             <select id="task-cat" [ngModel]="formCategory()" (ngModelChange)="formCategory.set($event)"
-              class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
               @for (cat of categories; track cat.value) {
                 <option [value]="cat.value">{{ cat.label }}</option>
               }
@@ -173,9 +173,9 @@ type DialogMode = 'project' | 'task' | null;
           </div>
 
           <div class="space-y-1.5">
-            <label for="task-desc" class="text-sm text-slate-300">{{ 'PROJECTS.DESCRIPTION' | translate }}</label>
+            <label for="task-desc" class="text-sm text-slate-700 dark:text-slate-200">{{ 'PROJECTS.DESCRIPTION' | translate }}</label>
             <input id="task-desc" [ngModel]="formDescription()" (ngModelChange)="formDescription.set($event)" type="text" [placeholder]="'ENTRIES.OPTIONAL' | translate"
-              class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
+              class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
           </div>
 
           <div class="flex gap-3 pt-2">
@@ -184,7 +184,7 @@ type DialogMode = 'project' | 'task' | null;
               {{ 'COMMON.SAVE' | translate }}
             </button>
             <button (click)="closeDialog()"
-              class="flex-1 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400">
+              class="flex-1 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400">
               {{ 'COMMON.CANCEL' | translate }}
             </button>
           </div>

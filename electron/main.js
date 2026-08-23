@@ -46,7 +46,7 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
     },
-    backgroundColor: '#0f172a',
+    backgroundColor: '#f4f5f7',
     show: false,
   });
 

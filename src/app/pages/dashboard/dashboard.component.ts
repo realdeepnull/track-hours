@@ -15,21 +15,21 @@ import { de, enUS } from 'date-fns/locale';
   selector: 'app-dashboard',
   imports: [RouterLink, DurationPipe, TranslatePipe],
   template: `
-    <div class="p-6 max-w-6xl mx-auto space-y-6">
+    <div class="p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
       <!-- Header -->
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-slate-100">{{ 'DASHBOARD.TITLE' | translate }}</h1>
-        <span class="text-sm text-slate-400">{{ today() }}</span>
+        <h1 class="text-2xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">{{ 'DASHBOARD.TITLE' | translate }}</h1>
+        <span class="text-sm text-slate-500 dark:text-slate-400">{{ today() }}</span>
       </div>
 
       <!-- Stats Row -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         @for (stat of stats(); track stat.labelKey) {
-          <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
-            <div class="text-xs font-medium text-slate-400 uppercase tracking-wide mb-1">{{ stat.labelKey | translate }}</div>
-            <div class="text-2xl font-bold text-slate-100 font-mono">{{ stat.value }}</div>
+          <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm shadow-slate-200/50 dark:shadow-none">
+            <div class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">{{ stat.labelKey | translate }}</div>
+            <div class="text-2xl font-semibold text-slate-900 dark:text-slate-100 font-mono">{{ stat.value }}</div>
             @if (stat.subKey) {
-              <div class="text-xs text-slate-500 mt-0.5">{{ stat.subKey | translate: stat.subParams }}</div>
+              <div class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{{ stat.subKey | translate: stat.subParams }}</div>
             }
           </div>
         }
@@ -37,56 +37,56 @@ import { de, enUS } from 'date-fns/locale';
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Recent entries -->
-        <div class="bg-slate-800 rounded-xl border border-slate-700">
-          <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700">
-            <h2 class="font-semibold text-slate-100">{{ 'DASHBOARD.RECENT_ENTRIES' | translate }}</h2>
-            <a routerLink="/entries" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">{{ 'DASHBOARD.VIEW_ALL' | translate }}</a>
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm shadow-slate-200/50 dark:shadow-none">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-700">
+            <h2 class="font-semibold text-slate-900 dark:text-slate-100">{{ 'DASHBOARD.RECENT_ENTRIES' | translate }}</h2>
+            <a routerLink="/entries" class="text-xs text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium transition-colors">{{ 'DASHBOARD.VIEW_ALL' | translate }}</a>
           </div>
-          <ul class="divide-y divide-slate-700/50" role="list">
+          <ul class="divide-y divide-slate-100 dark:divide-slate-700" role="list">
             @for (entry of recentEntries(); track entry.id) {
               <li class="px-5 py-3 flex items-center justify-between gap-3">
                 <div class="min-w-0">
-                  <div class="text-sm font-medium text-slate-100 truncate">
+                  <div class="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
                     {{ getProjectName(entry.projectId) }}
                   </div>
-                  <div class="text-xs text-slate-400 truncate">{{ getTaskName(entry.taskId) }}</div>
+                  <div class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ getTaskName(entry.taskId) }}</div>
                 </div>
                 <div class="text-right shrink-0">
-                  <div class="text-sm font-mono text-slate-200">{{ entry.durationSeconds | duration }}</div>
-                  <div class="text-xs text-slate-500">{{ formatEntryDate(entry.startTime) }}</div>
+                  <div class="text-sm font-mono text-slate-700 dark:text-slate-200">{{ entry.durationSeconds | duration }}</div>
+                  <div class="text-xs text-slate-400 dark:text-slate-500">{{ formatEntryDate(entry.startTime) }}</div>
                 </div>
               </li>
             }
             @empty {
-              <li class="px-5 py-8 text-center text-slate-500 text-sm">{{ 'DASHBOARD.NO_ENTRIES' | translate }}</li>
+              <li class="px-5 py-8 text-center text-slate-400 dark:text-slate-500 text-sm">{{ 'DASHBOARD.NO_ENTRIES' | translate }}</li>
             }
           </ul>
         </div>
 
         <!-- Projects overview -->
-        <div class="bg-slate-800 rounded-xl border border-slate-700">
-          <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700">
-            <h2 class="font-semibold text-slate-100">{{ 'DASHBOARD.PROJECTS_THIS_WEEK' | translate }}</h2>
-            <a routerLink="/projects" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">{{ 'DASHBOARD.MANAGE' | translate }}</a>
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm shadow-slate-200/50 dark:shadow-none">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-700">
+            <h2 class="font-semibold text-slate-900 dark:text-slate-100">{{ 'DASHBOARD.PROJECTS_THIS_WEEK' | translate }}</h2>
+            <a routerLink="/projects" class="text-xs text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium transition-colors">{{ 'DASHBOARD.MANAGE' | translate }}</a>
           </div>
-          <ul class="divide-y divide-slate-700/50 p-3 space-y-1" role="list">
+          <ul class="divide-y divide-slate-100 dark:divide-slate-700 p-3 space-y-1" role="list">
             @for (p of weeklyProjectStats(); track p.id) {
-              <li class="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-slate-700/40 transition-colors">
+              <li class="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
                 <div class="w-3 h-3 rounded-full shrink-0" [style.background-color]="p.color"></div>
                 <div class="flex-1 min-w-0">
-                  <div class="text-sm font-medium text-slate-200 truncate">{{ p.name }}</div>
-                  <div class="mt-1 h-1.5 rounded-full bg-slate-700 overflow-hidden">
+                  <div class="text-sm font-medium text-slate-700 dark:text-slate-200 truncate">{{ p.name }}</div>
+                  <div class="mt-1 h-1.5 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
                     <div class="h-full rounded-full transition-all duration-500"
                       [style.width.%]="p.percentage"
                       [style.background-color]="p.color">
                     </div>
                   </div>
                 </div>
-                <div class="shrink-0 text-xs font-mono text-slate-300">{{ p.totalSeconds | duration }}</div>
+                <div class="shrink-0 text-xs font-mono text-slate-500 dark:text-slate-400">{{ p.totalSeconds | duration }}</div>
               </li>
             }
             @empty {
-              <li class="px-2 py-8 text-center text-slate-500 text-sm">{{ 'DASHBOARD.NO_PROJECT_DATA' | translate }}</li>
+              <li class="px-2 py-8 text-center text-slate-400 dark:text-slate-500 text-sm">{{ 'DASHBOARD.NO_PROJECT_DATA' | translate }}</li>
             }
           </ul>
         </div>
@@ -94,18 +94,18 @@ import { de, enUS } from 'date-fns/locale';
 
       <!-- Quick start -->
       @if (suggestions().length > 0) {
-        <div class="bg-slate-800 rounded-xl border border-slate-700">
-          <div class="px-5 py-4 border-b border-slate-700">
-            <h2 class="font-semibold text-slate-100">{{ 'DASHBOARD.QUICK_START' | translate }}</h2>
-            <p class="text-xs text-slate-400 mt-0.5">{{ 'DASHBOARD.QUICK_START_HINT' | translate }}</p>
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm shadow-slate-200/50 dark:shadow-none">
+          <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-700">
+            <h2 class="font-semibold text-slate-900 dark:text-slate-100">{{ 'DASHBOARD.QUICK_START' | translate }}</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ 'DASHBOARD.QUICK_START_HINT' | translate }}</p>
           </div>
           <div class="p-4 flex flex-wrap gap-2">
             @for (s of suggestions(); track s.taskId) {
               <a [routerLink]="['/timer']" [queryParams]="{ projectId: s.projectId, taskId: s.taskId }"
-                class="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 transition-colors text-sm text-slate-200 border border-slate-600">
+                class="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100 dark:bg-slate-700 dark:hover:bg-slate-600 transition-colors text-sm text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600">
                 <div class="w-2 h-2 rounded-full" [style.background-color]="s.color"></div>
                 <span class="font-medium">{{ s.projectName }}</span>
-                <span class="text-slate-400">·</span>
+                <span class="text-slate-400 dark:text-slate-500">·</span>
                 <span>{{ s.taskName }}</span>
               </a>
             }

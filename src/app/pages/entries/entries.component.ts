@@ -21,35 +21,35 @@ type ViewMode = 'day' | 'week' | 'month';
   selector: 'app-entries',
   imports: [FormsModule, DurationPipe, TranslatePipe, IconComponent],
   template: `
-    <div class="p-6 max-w-6xl mx-auto space-y-5">
+    <div class="p-6 lg:p-8 max-w-6xl mx-auto space-y-5">
       <!-- Header -->
       <div class="flex flex-wrap items-center gap-3 justify-between">
-        <h1 class="text-2xl font-bold text-slate-100">{{ 'ENTRIES.TITLE' | translate }}</h1>
+        <h1 class="text-2xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">{{ 'ENTRIES.TITLE' | translate }}</h1>
         <div class="flex items-center gap-2">
           <button (click)="openAddDialog()"
-            class="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
+            class="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors shadow-sm shadow-indigo-500/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
             + {{ 'ENTRIES.ADD_ENTRY' | translate }}
           </button>
           <button (click)="exportCSV()"
-            class="px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400">
+            class="px-3 py-2 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/40 text-slate-700 dark:text-slate-200 text-sm border border-slate-200 dark:border-slate-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400">
             CSV
           </button>
           <button (click)="exportPDF()"
-            class="px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400">
+            class="px-3 py-2 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/40 text-slate-700 dark:text-slate-200 text-sm border border-slate-200 dark:border-slate-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400">
             PDF
           </button>
         </div>
       </div>
 
       <!-- View Tabs + Navigation -->
-      <div class="bg-slate-800 rounded-xl border border-slate-700 p-3 flex flex-wrap items-center gap-3">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm shadow-slate-200/50 dark:shadow-none p-3 flex flex-wrap items-center gap-3">
         <!-- Tabs -->
-        <div class="flex rounded-lg bg-slate-900 p-1 gap-0.5" role="tablist" [attr.aria-label]="'ENTRIES.TIME_PERIOD' | translate">
+        <div class="flex rounded-lg bg-slate-100 dark:bg-slate-900 p-1 gap-0.5" role="tablist" [attr.aria-label]="'ENTRIES.TIME_PERIOD' | translate">
           @for (tab of viewTabs; track tab.value) {
             <button role="tab" (click)="viewMode.set(tab.value)"
               [attr.aria-selected]="viewMode() === tab.value"
               class="px-4 py-1.5 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400"
-              [class]="viewMode() === tab.value ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-slate-200'">
+              [class]="viewMode() === tab.value ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-sm dark:shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'">
               {{ tab.label | translate }}
             </button>
           }
@@ -58,16 +58,16 @@ type ViewMode = 'day' | 'week' | 'month';
         <!-- Date navigation -->
         <div class="flex items-center gap-2 ml-auto">
           <button (click)="navigatePrev()" [attr.aria-label]="'ENTRIES.PREV_PERIOD' | translate"
-            class="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
+            class="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
             <app-icon name="chevron-left" class="w-4 h-4" />
           </button>
-          <span class="text-sm font-medium text-slate-200 min-w-48 text-center">{{ periodLabel() }}</span>
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-200 min-w-48 text-center">{{ periodLabel() }}</span>
           <button (click)="navigateNext()" [attr.aria-label]="'ENTRIES.NEXT_PERIOD' | translate"
-            class="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
+            class="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
             <app-icon name="chevron-right" class="w-4 h-4" />
           </button>
           <button (click)="goToToday()"
-            class="px-3 py-1.5 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-slate-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
+            class="px-3 py-1.5 rounded-lg text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400">
             {{ 'ENTRIES.TODAY' | translate }}
           </button>
         </div>
@@ -76,16 +76,16 @@ type ViewMode = 'day' | 'week' | 'month';
       <!-- Filters & Search -->
       <div class="flex flex-wrap gap-3">
         <input type="search" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" [placeholder]="'ENTRIES.SEARCH_PLACEHOLDER' | translate"
-          class="flex-1 min-w-[200px] bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder:text-slate-500"/>
+          class="flex-1 min-w-[200px] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder:text-slate-400 dark:placeholder:text-slate-500"/>
         <select [ngModel]="filterProjectId()" (ngModelChange)="filterProjectId.set($event)"
-          class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
           <option value="">{{ 'ENTRIES.ALL_PROJECTS' | translate }}</option>
           @for (p of projects(); track p.id) {
             <option [value]="p.id">{{ p.name }}</option>
           }
         </select>
         <select [ngModel]="filterCategory()" (ngModelChange)="filterCategory.set($event)"
-          class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
           <option value="">{{ 'ENTRIES.ALL_CATEGORIES' | translate }}</option>
           @for (cat of categories; track cat.value) {
             <option [value]="cat.value">{{ cat.label }}</option>
@@ -95,26 +95,26 @@ type ViewMode = 'day' | 'week' | 'month';
 
       <!-- Summary Row -->
       <div class="grid grid-cols-3 gap-4">
-        <div class="bg-slate-800 rounded-xl border border-slate-700 px-4 py-3 text-center">
-          <div class="text-xs text-slate-400 mb-1">{{ 'ENTRIES.ENTRIES_LABEL' | translate }}</div>
-          <div class="text-xl font-bold font-mono text-slate-100">{{ filteredEntries().length }}</div>
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm shadow-slate-200/50 dark:shadow-none px-4 py-3 text-center">
+          <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">{{ 'ENTRIES.ENTRIES_LABEL' | translate }}</div>
+          <div class="text-xl font-semibold font-mono text-slate-900 dark:text-slate-100">{{ filteredEntries().length }}</div>
         </div>
-        <div class="bg-slate-800 rounded-xl border border-slate-700 px-4 py-3 text-center">
-          <div class="text-xs text-slate-400 mb-1">{{ 'ENTRIES.TOTAL' | translate }}</div>
-          <div class="text-xl font-bold font-mono text-slate-100">{{ totalFiltered() | duration }}</div>
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm shadow-slate-200/50 dark:shadow-none px-4 py-3 text-center">
+          <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">{{ 'ENTRIES.TOTAL' | translate }}</div>
+          <div class="text-xl font-semibold font-mono text-slate-900 dark:text-slate-100">{{ totalFiltered() | duration }}</div>
         </div>
-        <div class="bg-slate-800 rounded-xl border border-slate-700 px-4 py-3 text-center">
-          <div class="text-xs text-slate-400 mb-1">{{ 'ENTRIES.AVG_PER_DAY' | translate }}</div>
-          <div class="text-xl font-bold font-mono text-slate-100">{{ avgPerDay() | duration }}</div>
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm shadow-slate-200/50 dark:shadow-none px-4 py-3 text-center">
+          <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">{{ 'ENTRIES.AVG_PER_DAY' | translate }}</div>
+          <div class="text-xl font-semibold font-mono text-slate-900 dark:text-slate-100">{{ avgPerDay() | duration }}</div>
         </div>
       </div>
 
       <!-- Entries Table -->
-      <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm shadow-slate-200/50 dark:shadow-none overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full text-sm" [attr.aria-label]="'ENTRIES.TITLE' | translate">
             <thead>
-              <tr class="border-b border-slate-700 text-xs font-medium text-slate-400 uppercase tracking-wide">
+              <tr class="border-b border-slate-100 dark:border-slate-700 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                 <th class="px-4 py-3 text-left">{{ 'ENTRIES.DATE' | translate }}</th>
                 <th class="px-4 py-3 text-left">{{ 'ENTRIES.TIME_PERIOD' | translate }}</th>
                 <th class="px-4 py-3 text-left">{{ 'ENTRIES.DURATION' | translate }}</th>
@@ -125,21 +125,21 @@ type ViewMode = 'day' | 'week' | 'month';
                 <th class="px-4 py-3 text-right">{{ 'ENTRIES.ACTIONS' | translate }}</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-700/50">
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
               @for (entry of filteredEntries(); track entry.id) {
-                <tr class="hover:bg-slate-700/30 transition-colors">
-                  <td class="px-4 py-3 text-slate-300 whitespace-nowrap">{{ formatDate(entry.startTime) }}</td>
-                  <td class="px-4 py-3 text-slate-400 whitespace-nowrap font-mono text-xs">
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                  <td class="px-4 py-3 text-slate-600 dark:text-slate-300 whitespace-nowrap">{{ formatDate(entry.startTime) }}</td>
+                  <td class="px-4 py-3 text-slate-500 dark:text-slate-400 whitespace-nowrap font-mono text-xs">
                     {{ formatTime(entry.startTime) }} – {{ formatTime(entry.endTime!) }}
                   </td>
-                  <td class="px-4 py-3 font-mono text-slate-200 whitespace-nowrap">{{ entry.durationSeconds | duration }}</td>
+                  <td class="px-4 py-3 font-mono text-slate-700 dark:text-slate-200 whitespace-nowrap">{{ entry.durationSeconds | duration }}</td>
                   <td class="px-4 py-3">
                     <div class="flex items-center gap-2">
                       <div class="w-2 h-2 rounded-full shrink-0" [style.background-color]="getProjectColor(entry.projectId)"></div>
-                      <span class="text-slate-200 truncate max-w-[120px]">{{ getProjectName(entry.projectId) }}</span>
+                      <span class="text-slate-700 dark:text-slate-200 truncate max-w-[120px]">{{ getProjectName(entry.projectId) }}</span>
                     </div>
                   </td>
-                  <td class="px-4 py-3 text-slate-300 truncate max-w-[120px]">{{ getTaskName(entry.taskId) }}</td>
+                  <td class="px-4 py-3 text-slate-600 dark:text-slate-300 truncate max-w-[120px]">{{ getTaskName(entry.taskId) }}</td>
                   <td class="px-4 py-3">
                     <span class="px-2 py-0.5 rounded text-xs font-medium"
                       [style.background-color]="getCategoryColor(entry.taskId) + '20'"
@@ -147,29 +147,29 @@ type ViewMode = 'day' | 'week' | 'month';
                       {{ getCategoryLabel(entry.taskId) }}
                     </span>
                   </td>
-                  <td class="px-4 py-3 text-slate-500 truncate max-w-[150px]">{{ entry.note ?? '' }}</td>
+                  <td class="px-4 py-3 text-slate-400 dark:text-slate-500 truncate max-w-[150px]">{{ entry.note ?? '' }}</td>
                   <td class="px-4 py-3 text-right">
                     <div class="flex items-center justify-end gap-1">
                       <button (click)="openEditDialog(entry)"
-                        class="p-1.5 rounded text-slate-400 hover:text-slate-200 hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400"
+                        class="p-1.5 rounded text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400"
                         [attr.aria-label]="'COMMON.EDIT' | translate">
                         <app-icon name="edit" class="w-3.5 h-3.5" />
                       </button>
                       @if (confirmDeleteEntryId() === entry.id) {
-                        <span class="text-xs text-rose-400">{{ 'ENTRIES.CONFIRM_DELETE' | translate }}</span>
+                        <span class="text-xs text-rose-600">{{ 'ENTRIES.CONFIRM_DELETE' | translate }}</span>
                         <button (click)="deleteEntry(entry.id)"
                           class="px-2 py-1 rounded text-xs bg-rose-600 hover:bg-rose-500 text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-400"
                           [attr.aria-label]="'COMMON.CONFIRM' | translate">
                           {{ 'COMMON.YES' | translate }}
                         </button>
                         <button (click)="confirmDeleteEntryId.set(null)"
-                          class="px-2 py-1 rounded text-xs bg-slate-600 hover:bg-slate-500 text-slate-200 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400"
+                          class="px-2 py-1 rounded text-xs bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500 text-slate-700 dark:text-slate-200 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400"
                           [attr.aria-label]="'COMMON.CANCEL' | translate">
                           {{ 'COMMON.NO' | translate }}
                         </button>
                       } @else {
                         <button (click)="confirmDeleteEntryId.set(entry.id)"
-                          class="p-1.5 rounded text-slate-400 hover:text-rose-400 hover:bg-rose-950/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-400"
+                          class="p-1.5 rounded text-slate-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-400"
                           [attr.aria-label]="'COMMON.DELETE' | translate">
                           <app-icon name="trash" class="w-3.5 h-3.5" />
                         </button>
@@ -180,7 +180,7 @@ type ViewMode = 'day' | 'week' | 'month';
               }
               @empty {
                 <tr>
-                  <td colspan="8" class="px-4 py-12 text-center text-slate-500">{{ 'ENTRIES.NO_ENTRIES_PERIOD' | translate }}</td>
+                  <td colspan="8" class="px-4 py-12 text-center text-slate-400 dark:text-slate-500">{{ 'ENTRIES.NO_ENTRIES_PERIOD' | translate }}</td>
                 </tr>
               }
             </tbody>
@@ -191,16 +191,16 @@ type ViewMode = 'day' | 'week' | 'month';
 
     <!-- Add/Edit Entry Dialog -->
     @if (showDialog()) {
-      <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+      <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-sm"
         role="dialog" aria-modal="true" [attr.aria-label]="(editingEntryId() ? 'ENTRIES.EDIT_ENTRY' : 'ENTRIES.ADD_ENTRY') | translate">
-        <div class="bg-slate-800 rounded-2xl border border-slate-700 w-full max-w-lg shadow-2xl p-6 space-y-4">
-          <h2 class="text-lg font-semibold text-slate-100">{{ (editingEntryId() ? 'ENTRIES.EDIT_ENTRY' : 'ENTRIES.ADD_ENTRY') | translate }}</h2>
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 w-full max-w-lg shadow-xl shadow-slate-300/40 dark:shadow-slate-900/40 p-6 space-y-4">
+          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ (editingEntryId() ? 'ENTRIES.EDIT_ENTRY' : 'ENTRIES.ADD_ENTRY') | translate }}</h2>
 
           <div class="grid grid-cols-2 gap-4">
             <div class="space-y-1.5">
-              <label for="entry-project" class="text-sm text-slate-300">{{ 'ENTRIES.PROJECT' | translate }} *</label>
+              <label for="entry-project" class="text-sm text-slate-700 dark:text-slate-200">{{ 'ENTRIES.PROJECT' | translate }} *</label>
               <select id="entry-project" [ngModel]="dProjectId()" (ngModelChange)="dProjectId.set($event); dTaskId.set('')"
-                class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <option value="">{{ 'ENTRIES.SELECT' | translate }}</option>
                 @for (p of projects(); track p.id) {
                   <option [value]="p.id">{{ p.name }}</option>
@@ -208,9 +208,9 @@ type ViewMode = 'day' | 'week' | 'month';
               </select>
             </div>
             <div class="space-y-1.5">
-              <label for="entry-task" class="text-sm text-slate-300">{{ 'ENTRIES.TASK' | translate }} *</label>
+              <label for="entry-task" class="text-sm text-slate-700 dark:text-slate-200">{{ 'ENTRIES.TASK' | translate }} *</label>
               <select id="entry-task" [ngModel]="dTaskId()" (ngModelChange)="dTaskId.set($event)" [disabled]="!dProjectId()"
-                class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50">
+                class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50">
                 <option value="">{{ 'ENTRIES.SELECT' | translate }}</option>
                 @for (t of dialogTasks(); track t.id) {
                   <option [value]="t.id">{{ t.name }}</option>
@@ -221,24 +221,24 @@ type ViewMode = 'day' | 'week' | 'month';
 
           <div class="grid grid-cols-2 gap-4">
             <div class="space-y-1.5">
-              <label for="entry-start" class="text-sm text-slate-300">{{ 'ENTRIES.START' | translate }} *</label>
+              <label for="entry-start" class="text-sm text-slate-700 dark:text-slate-200">{{ 'ENTRIES.START' | translate }} *</label>
               <input id="entry-start" type="datetime-local" [ngModel]="dStartTime()" (ngModelChange)="dStartTime.set($event)"
-                class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
+                class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
             </div>
             <div class="space-y-1.5">
-              <label for="entry-end" class="text-sm text-slate-300">{{ 'ENTRIES.END' | translate }} *</label>
+              <label for="entry-end" class="text-sm text-slate-700 dark:text-slate-200">{{ 'ENTRIES.END' | translate }} *</label>
               <input id="entry-end" type="datetime-local" [ngModel]="dEndTime()" (ngModelChange)="dEndTime.set($event)"
-                [class]="dEndBeforeStart() ? 'w-full bg-slate-700 border border-rose-500 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500' : 'w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500'"/>
+                [class]="dEndBeforeStart() ? 'w-full bg-slate-50 dark:bg-slate-700 border border-rose-400 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500' : 'w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500'"/>
               @if (dEndBeforeStart()) {
-                <p class="text-xs text-rose-400" role="alert">{{ 'ENTRIES.END_BEFORE_START' | translate }}</p>
+                <p class="text-xs text-rose-600" role="alert">{{ 'ENTRIES.END_BEFORE_START' | translate }}</p>
               }
             </div>
           </div>
 
           <div class="space-y-1.5">
-              <label for="entry-note" class="text-sm text-slate-300">{{ 'ENTRIES.NOTE' | translate }}</label>
+              <label for="entry-note" class="text-sm text-slate-700 dark:text-slate-200">{{ 'ENTRIES.NOTE' | translate }}</label>
               <input id="entry-note" type="text" [ngModel]="dNote()" (ngModelChange)="dNote.set($event)" [placeholder]="'ENTRIES.OPTIONAL' | translate"
-              class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
+              class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
           </div>
 
           <div class="flex gap-3 pt-2">
@@ -247,7 +247,7 @@ type ViewMode = 'day' | 'week' | 'month';
               {{ 'COMMON.SAVE' | translate }}
             </button>
             <button (click)="closeDialog()"
-              class="flex-1 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400">
+              class="flex-1 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400">
               {{ 'COMMON.CANCEL' | translate }}
             </button>
           </div>

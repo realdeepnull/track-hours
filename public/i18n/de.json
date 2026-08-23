@@ -154,6 +154,8 @@
     "SAVE": "Einstellungen speichern",
     "SAVED": "Gespeichert",
     "THEME": "Design",
+    "THEME_LIGHT": "Hell",
+    "THEME_DARK": "Dunkel",
     "EXPORT_FORMAT": "Exportformat",
     "ABOUT_DESC": "Moderne Zeiterfassung für Einzelpersonen & kleine Teams",
     "ABOUT_STORAGE": "Daten werden lokal gespeichert."

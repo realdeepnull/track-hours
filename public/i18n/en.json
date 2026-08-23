@@ -154,6 +154,8 @@
     "SAVE": "Save settings",
     "SAVED": "Saved",
     "THEME": "Theme",
+    "THEME_LIGHT": "Light",
+    "THEME_DARK": "Dark",
     "EXPORT_FORMAT": "Export format",
     "ABOUT_DESC": "Modern time tracking for individuals & small teams",
     "ABOUT_STORAGE": "Data is stored locally."

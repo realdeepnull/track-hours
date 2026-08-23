@@ -13,23 +13,27 @@ import { version } from '../../../../package.json';
   imports: [RouterLink, RouterLinkActive, DurationPipe, TranslatePipe, IconComponent],
   template: `
     <nav
-      class="flex flex-col h-full bg-indigo-950 text-indigo-100 w-64 min-w-[16rem] select-none"
+      class="flex flex-col h-full w-64 min-w-[16rem] select-none border-r border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl"
       aria-label="Hauptnavigation"
     >
       <!-- Logo -->
-      <div class="flex items-center gap-3 px-5 py-5 border-b border-indigo-800">
-        <div class="w-9 h-9 rounded-xl bg-indigo-500 flex items-center justify-center shadow-lg">
+      <div class="flex items-center gap-3 px-5 py-5 border-b border-slate-200/70 dark:border-slate-800">
+        <div
+          class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm shadow-indigo-500/30"
+        >
           <app-icon name="logo" class="w-5 h-5 text-white" />
         </div>
         <div>
-          <div class="font-bold text-base text-white leading-tight">Track Hours</div>
-          <div class="text-xs text-indigo-300">{{ 'APP.SUBTITLE' | translate }}</div>
+          <div class="font-semibold text-base text-slate-900 dark:text-white leading-tight tracking-tight">
+            Track Hours
+          </div>
+          <div class="text-xs text-slate-500 dark:text-slate-400">{{ 'APP.SUBTITLE' | translate }}</div>
         </div>
       </div>
 
       <!-- Running timer indicator -->
       @if (isRunning()) {
-        <div class="mx-3 mt-3 rounded-lg bg-emerald-600/20 border border-emerald-500/40 px-3 py-2">
+        <div class="mx-3 mt-3 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 px-3 py-2.5">
           <div class="flex items-center gap-2">
             <span class="relative flex h-2.5 w-2.5">
               <span
@@ -37,15 +41,15 @@ import { version } from '../../../../package.json';
               ></span>
               <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
             </span>
-            <span class="text-xs font-medium text-emerald-300">{{
+            <span class="text-xs font-medium text-emerald-700 dark:text-emerald-300">{{
               'TIMER.ACTIVE' | translate
             }}</span>
           </div>
-          <div class="text-lg font-mono font-bold text-emerald-200 mt-0.5">
+          <div class="text-lg font-mono font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
             {{ elapsed() | duration }}
           </div>
           @if (runningProjectName()) {
-            <div class="text-xs text-emerald-300/70 truncate mt-0.5">
+            <div class="text-xs text-emerald-600/80 dark:text-emerald-400/70 truncate mt-0.5">
               {{ runningProjectName() }}
             </div>
           }
@@ -53,14 +57,14 @@ import { version } from '../../../../package.json';
       }
 
       <!-- Nav items -->
-      <ul class="flex-1 px-3 py-4 space-y-1 overflow-y-auto" role="list">
+      <ul class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto" role="list">
         @for (item of navItems; track item.path) {
           <li>
             <a
               [routerLink]="item.path"
-              routerLinkActive="bg-indigo-700 text-white"
+              routerLinkActive="bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-300"
               [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
-              class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-indigo-200 hover:bg-indigo-800 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400"
+              class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400"
             >
               <span class="w-5 h-5 shrink-0">
                 <app-icon [name]="item.icon" />
@@ -72,7 +76,7 @@ import { version } from '../../../../package.json';
       </ul>
 
       <!-- Footer -->
-      <div class="px-5 py-4 border-t border-indigo-800 text-xs text-indigo-500">
+      <div class="px-5 py-4 border-t border-slate-200/70 dark:border-slate-800 text-xs text-slate-400 dark:text-slate-500">
         Track Hours v{{ appVersion }}
       </div>
     </nav>
