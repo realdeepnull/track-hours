@@ -9,7 +9,7 @@ import { ProjectService } from '../../services/project.service';
 import { StorageService } from '../../services/storage.service';
 import { DurationPipe } from '../../shared/duration.pipe';
 import { startOfDay, startOfWeek, startOfMonth } from 'date-fns';
-import { de } from 'date-fns/locale';
+import { de, enUS } from 'date-fns/locale';
 
 @Component({
   selector: 'app-dashboard',
@@ -135,10 +135,12 @@ export class DashboardComponent {
     return new Date().toLocaleDateString(locale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   });
 
+  private readonly dateLocale = computed(() => this.langSignal() === 'en' ? enUS : de);
+
   readonly stats = computed(() => {
     const now = new Date();
     const dayStart = startOfDay(now).getTime();
-    const weekStart = startOfWeek(now, { locale: de }).getTime();
+    const weekStart = startOfWeek(now, { locale: this.dateLocale() }).getTime();
     const monthStart = startOfMonth(now).getTime();
 
     const entries = this.timeEntryService.entries().filter((e) => e.endTime);
@@ -172,7 +174,7 @@ export class DashboardComponent {
 
   readonly weeklyProjectStats = computed(() => {
     const now = new Date();
-    const weekStart = startOfWeek(now, { locale: de }).getTime();
+    const weekStart = startOfWeek(now, { locale: this.dateLocale() }).getTime();
     const weekEntries = this.timeEntryService.entries().filter(
       (e) => e.endTime && new Date(e.startTime).getTime() >= weekStart
     );

@@ -12,9 +12,11 @@ export class TimeEntryService {
 
   async init(): Promise<void> {
     const entries = await this.storage.loadTimeEntries();
+    let changed = false;
     // Fix any stale running entries from previous sessions
     const fixed = entries.map((e) => {
       if (e.endTime === null) {
+        changed = true;
         const start = new Date(e.startTime).getTime();
         const end = Date.now();
         return {
@@ -26,7 +28,7 @@ export class TimeEntryService {
       return e;
     });
     this.entries.set(fixed);
-    if (fixed.some((e, i) => e !== entries[i])) {
+    if (changed) {
       await this.storage.saveTimeEntries(fixed);
     }
   }
@@ -98,7 +100,9 @@ export class TimeEntryService {
       list.map((e) => {
         if (e.id !== id) return e;
         const updated = { ...e, ...updates };
-        if (updated.startTime && updated.endTime) {
+        // Recompute duration whenever both timestamps are present
+        // and at least one of them was changed by this update
+        if (updated.startTime && updated.endTime && (updates.startTime || updates.endTime)) {
           updated.durationSeconds = Math.round(
             (new Date(updated.endTime).getTime() - new Date(updated.startTime).getTime()) / 1000
           );
@@ -126,9 +130,14 @@ export class TimeEntryService {
   entriesForRange(from: Date, to: Date): TimeEntry[] {
     const fromMs = from.getTime();
     const toMs = to.getTime();
-    return this.entries().filter(
-      (e) => e.endTime && new Date(e.startTime).getTime() >= fromMs && new Date(e.startTime).getTime() <= toMs
-    );
+    return this.entries().filter((e) => {
+      if (!e.endTime) return false;
+      const startMs = new Date(e.startTime).getTime();
+      const endMs = new Date(e.endTime).getTime();
+      // Include entries that overlap the range: started before the range ends
+      // and ended after the range starts
+      return startMs <= toMs && endMs >= fromMs;
+    });
   }
 
   totalSecondsForProject(projectId: string, entries?: TimeEntry[]): number {

@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { TimeEntryService } from '../../services/time-entry.service';
 import { ProjectService } from '../../services/project.service';
 import { ExportService } from '../../services/export.service';
@@ -11,7 +12,8 @@ import {
   startOfDay, endOfDay, startOfWeek, endOfWeek,
   startOfMonth, endOfMonth, format, addDays, addWeeks, addMonths, subDays, subWeeks, subMonths
 } from 'date-fns';
-import { de } from 'date-fns/locale';
+import { de, enUS } from 'date-fns/locale';
+import { map, startWith } from 'rxjs';
 
 type ViewMode = 'day' | 'week' | 'month';
 
@@ -235,7 +237,7 @@ type ViewMode = 'day' | 'week' | 'month';
 
           <div class="space-y-1.5">
               <label for="entry-note" class="text-sm text-slate-300">{{ 'ENTRIES.NOTE' | translate }}</label>
-              <input id="entry-note" type="text" [(ngModel)]="dNote" [placeholder]="'ENTRIES.OPTIONAL' | translate"
+              <input id="entry-note" type="text" [ngModel]="dNote()" (ngModelChange)="dNote.set($event)" [placeholder]="'ENTRIES.OPTIONAL' | translate"
               class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
           </div>
 
@@ -258,6 +260,15 @@ export class EntriesComponent {
   private readonly timeEntryService = inject(TimeEntryService);
   private readonly projectService = inject(ProjectService);
   private readonly exportService = inject(ExportService);
+  private readonly translateService = inject(TranslateService);
+
+  private readonly langSignal = toSignal(
+    this.translateService.onLangChange.pipe(
+      map((e) => e.lang),
+      startWith(this.translateService.getCurrentLang() ?? 'de')
+    )
+  );
+  private readonly dateLocale = computed(() => this.langSignal() === 'en' ? enUS : de);
 
   readonly projects = this.projectService.activeProjects;
   readonly categories = TASK_CATEGORIES;
@@ -277,13 +288,14 @@ export class EntriesComponent {
   readonly periodLabel = computed(() => {
     const d = this.currentDate();
     switch (this.viewMode()) {
-      case 'day': return format(d, 'EEEE, d. MMMM yyyy', { locale: de });
+      case 'day': return format(d, 'EEEE, d. MMMM yyyy', { locale: this.dateLocale() });
       case 'week': {
-        const ws = startOfWeek(d, { locale: de });
-        const we = endOfWeek(d, { locale: de });
-        return `${format(ws, 'd. MMM', { locale: de })} – ${format(we, 'd. MMM yyyy', { locale: de })}`;
+        const locale = this.dateLocale();
+        const ws = startOfWeek(d, { locale });
+        const we = endOfWeek(d, { locale });
+        return `${format(ws, 'd. MMM', { locale })} – ${format(we, 'd. MMM yyyy', { locale })}`;
       }
-      case 'month': return format(d, 'MMMM yyyy', { locale: de });
+      case 'month': return format(d, 'MMMM yyyy', { locale: this.dateLocale() });
     }
   });
 
@@ -292,7 +304,12 @@ export class EntriesComponent {
     let from: Date, to: Date;
     switch (this.viewMode()) {
       case 'day': from = startOfDay(d); to = endOfDay(d); break;
-      case 'week': from = startOfWeek(d, { locale: de }); to = endOfWeek(d, { locale: de }); break;
+      case 'week': {
+        const loc = this.dateLocale();
+        from = startOfWeek(d, { locale: loc });
+        to = endOfWeek(d, { locale: loc });
+        break;
+      }
       case 'month': from = startOfMonth(d); to = endOfMonth(d); break;
     }
     return this.timeEntryService.entriesForRange(from, to)
@@ -377,7 +394,7 @@ export class EntriesComponent {
   dTaskId = signal('');
   dStartTime = signal('');
   dEndTime = signal('');
-  dNote = '';
+  dNote = signal('');
 
   readonly dEndBeforeStart = computed(() =>
     !!this.dStartTime() && !!this.dEndTime() &&
@@ -396,7 +413,7 @@ export class EntriesComponent {
     this.dTaskId.set('');
     this.dStartTime.set(this.toLocalDatetimeString(now));
     this.dEndTime.set(this.toLocalDatetimeString(now));
-    this.dNote = '';
+    this.dNote.set('');
     this.showDialog.set(true);
   }
 
@@ -406,7 +423,7 @@ export class EntriesComponent {
     this.dTaskId.set(entry.taskId);
     this.dStartTime.set(this.toLocalDatetimeString(new Date(entry.startTime)));
     this.dEndTime.set(entry.endTime ? this.toLocalDatetimeString(new Date(entry.endTime)) : '');
-    this.dNote = entry.note ?? '';
+    this.dNote.set(entry.note ?? '');
     this.showDialog.set(true);
   }
 
@@ -423,10 +440,10 @@ export class EntriesComponent {
         taskId: this.dTaskId(),
         startTime: start,
         endTime: end,
-        note: this.dNote || undefined,
+        note: this.dNote() || undefined,
       });
     } else {
-      await this.timeEntryService.addEntry(this.dProjectId(), this.dTaskId(), start, end, this.dNote);
+      await this.timeEntryService.addEntry(this.dProjectId(), this.dTaskId(), start, end, this.dNote());
     }
     this.closeDialog();
   }
@@ -452,7 +469,7 @@ export class EntriesComponent {
   }
 
   formatDate(iso: string): string {
-    return format(new Date(iso), 'dd.MM.yyyy', { locale: de });
+    return format(new Date(iso), 'dd.MM.yyyy', { locale: this.dateLocale() });
   }
 
   formatTime(iso: string): string {

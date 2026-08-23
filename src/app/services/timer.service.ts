@@ -1,4 +1,4 @@
-import { Service, OnDestroy, computed, inject, signal } from '@angular/core';
+import { Service, OnDestroy, computed, effect, inject, signal } from '@angular/core';
 import { TimeEntryService } from './time-entry.service';
 import { StorageService } from './storage.service';
 
@@ -14,18 +14,27 @@ export class TimerService implements OnDestroy {
   readonly isRunning = computed(() => !!this.timeEntryService.runningEntry());
 
   constructor() {
-    // Tick every second when running
-    this.tickInterval = setInterval(() => {
-      const running = this.timeEntryService.runningEntry();
-      if (running) {
-        const secs = Math.round(
-          (Date.now() - new Date(running.startTime).getTime()) / 1000
-        );
-        this.elapsed.set(secs);
-      } else {
+    // Only tick while a timer is running; start/stop the interval reactively
+    effect((onCleanup) => {
+      if (!this.isRunning()) {
         this.elapsed.set(0);
+        return;
       }
-    }, 1000);
+      this.tickInterval = setInterval(() => {
+        const entry = this.timeEntryService.runningEntry();
+        if (entry) {
+          this.elapsed.set(
+            Math.round((Date.now() - new Date(entry.startTime).getTime()) / 1000)
+          );
+        }
+      }, 1000);
+      onCleanup(() => {
+        if (this.tickInterval !== null) {
+          clearInterval(this.tickInterval);
+          this.tickInterval = null;
+        }
+      });
+    });
   }
 
   async start(projectId: string, taskId: string): Promise<void> {

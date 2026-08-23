@@ -152,8 +152,11 @@ export class SettingsComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     // Settings were already loaded by App component; sync the local form signal.
     const s = this.storageService.settings();
-    const language =
-      s.language ?? this.translateService.getCurrentLang() ?? DEFAULT_SETTINGS.language;
+    // The translateService reflects the currently active language (which may
+    // have been changed via updateSetting without saving yet). Prefer it over
+    // the persisted value so the correct language button is highlighted.
+    const activeLang = this.translateService.getCurrentLang() as 'de' | 'en' | null;
+    const language = activeLang ?? s.language ?? DEFAULT_SETTINGS.language;
     this.settings.set({ ...DEFAULT_SETTINGS, ...s, language });
   }
 
@@ -163,6 +166,10 @@ export class SettingsComponent implements OnInit {
 
   updateSetting<K extends keyof AppSettings>(key: K, value: AppSettings[K]): void {
     this.settings.update((s) => ({ ...s, [key]: value }));
+    // Apply language changes immediately so the user sees the result without saving
+    if (key === 'language') {
+      this.translateService.use(value as 'de' | 'en');
+    }
   }
 
   async save(): Promise<void> {
