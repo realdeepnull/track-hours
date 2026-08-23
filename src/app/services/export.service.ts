@@ -63,8 +63,9 @@ export class ExportService {
       .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(';'))
       .join('\r\n');
 
+    const dateStr = format(new Date(), 'yyyy-MM-dd');
     const bom = '\uFEFF'; // UTF-8 BOM for Excel
-    await this.storage.exportSave(filename ?? 'zeiterfassung.csv', bom + csvContent);
+    await this.storage.exportSave(filename ?? `zeiterfassung-${dateStr}.csv`, bom + csvContent);
   }
 
   async exportPDF(
@@ -81,15 +82,14 @@ export class ExportService {
 
     doc.setFontSize(18);
     doc.setTextColor(30, 27, 75);
-    doc.text(this.t('EXPORT.APP_TITLE'), 14, 18);
+    doc.text(title, 14, 18);
 
     doc.setFontSize(11);
     doc.setTextColor(100);
-    doc.text(title, 14, 26);
     doc.text(
       `${this.t('EXPORT.CREATED')}: ${format(new Date(), 'dd.MM.yyyy HH:mm', { locale: this.dateLocale })}`,
       14,
-      32,
+      26,
     );
 
     const tableRows = entries
@@ -118,7 +118,7 @@ export class ExportService {
     const totalM = Math.floor((totalSecs % 3600) / 60);
 
     autoTable(doc, {
-      startY: 38,
+      startY: 32,
       head: [
         [
           this.t('ENTRIES.DATE'),
@@ -138,7 +138,8 @@ export class ExportService {
       alternateRowStyles: { fillColor: [248, 248, 255] },
     });
 
+    const dateStr = format(new Date(), 'yyyy-MM-dd');
     const pdfBytes = doc.output('arraybuffer');
-    await this.storage.exportSave(filename ?? 'zeiterfassung.pdf', new Uint8Array(pdfBytes));
+    await this.storage.exportSave(filename ?? `zeiterfassung-${dateStr}.pdf`, new Uint8Array(pdfBytes));
   }
 }
