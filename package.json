@@ -11,7 +11,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "electron:dev": "concurrently \"ng serve\" \"wait-on http://localhost:4200 && electron electron/main.js --dev\"",
-    "electron:build": "ng build --configuration electron && electron-builder",
+    "electron:build": "ng build --configuration electron && electron-builder --publish onTagOrDraft",
     "electron:start": "electron electron/main.js",
     "electron:run": "ng build --configuration electron && electron electron/main.js",
     "lint": "ng lint"
@@ -43,7 +43,7 @@
     },
     "publish": {
       "provider": "github",
-      "owner": "ynnckrkn",
+      "owner": "realdeepnull",
       "repo": "track-hours"
     }
   },

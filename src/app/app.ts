@@ -33,6 +33,6 @@ export class App implements OnInit {
     if (settings.reminderEnabled) {
       this.timerService.setupReminders(settings.reminderIntervalMinutes);
     }
-    this.updateService.init();
+    await this.updateService.init();
   }
 }

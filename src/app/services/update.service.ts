@@ -7,7 +7,7 @@ export class UpdateService {
   readonly updateError = signal<string | null>(null);
   readonly downloadPercent = signal<number | null>(null);
 
-  init(): void {
+  async init(): Promise<void> {
     const api = window.electronAPI;
     if (!api) return;
 
@@ -17,6 +17,7 @@ export class UpdateService {
 
     api.onUpdateDownloaded(() => {
       this.downloadReady.set(true);
+      this.downloadPercent.set(100);
     });
 
     api.onUpdateError?.((message: string) => {
@@ -26,6 +27,23 @@ export class UpdateService {
     api.onUpdateProgress?.((percent: number) => {
       this.downloadPercent.set(percent);
     });
+
+    // Recover any update events that fired before the renderer
+    // registered its IPC listeners (race condition fix).
+    const status = await api.getUpdateStatus();
+    if (status.downloaded) {
+      this.downloadReady.set(true);
+      this.downloadPercent.set(100);
+    }
+    if (status.availableVersion) {
+      this.availableVersion.set(status.availableVersion);
+    }
+    if (status.error) {
+      this.updateError.set(status.error);
+    }
+    if (status.downloadPercent !== null) {
+      this.downloadPercent.set(status.downloadPercent);
+    }
   }
 
   install(): void {

@@ -3,11 +3,22 @@ const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
 
+// Enable updater logging to stderr so update issues are debuggable.
+autoUpdater.logger = console;
 autoUpdater.autoDownload = true;
 autoUpdater.autoInstallOnAppQuit = true;
 
 let mainWindow;
 const isDev = process.argv.includes('--dev');
+
+// Cached update state so the renderer can query it even if it
+// registers its IPC listeners after an event has already fired.
+const updateState = {
+  availableVersion: null,
+  downloaded: false,
+  error: null,
+  downloadPercent: null,
+};
 
 app.setAppUserModelId('com.trackhours.app');
 
@@ -126,33 +137,55 @@ ipcMain.handle('export:save', (event, filename, content) => {
   });
 });
 
+// Register all autoUpdater listeners BEFORE calling checkForUpdates()
+// to avoid a race condition where events fire before listeners are set.
+autoUpdater.on('update-available', (info) => {
+  updateState.availableVersion = info.version;
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('update:available', info.version);
+  }
+});
+
+autoUpdater.on('update-downloaded', () => {
+  updateState.downloaded = true;
+  updateState.downloadPercent = 100;
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('update:downloaded');
+  }
+});
+
+autoUpdater.on('download-progress', (progress) => {
+  updateState.downloadPercent = Math.round(progress.percent);
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('update:progress', updateState.downloadPercent);
+  }
+});
+
+autoUpdater.on('error', (err) => {
+  console.error('autoUpdater error', err);
+  updateState.error = err.message;
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('update:error', err.message);
+  }
+});
+
 app.whenReady().then(() => {
   createWindow();
 
   if (!isDev) {
-    autoUpdater.checkForUpdates();
+    autoUpdater.checkForUpdates().catch((err) => {
+      console.error('checkForUpdates failed:', err);
+    });
   }
-
-  autoUpdater.on('update-available', (info) => {
-    mainWindow.webContents.send('update:available', info.version);
-  });
-
-  autoUpdater.on('update-downloaded', () => {
-    mainWindow.webContents.send('update:downloaded');
-  });
-
-  autoUpdater.on('download-progress', (progress) => {
-    mainWindow.webContents.send('update:progress', Math.round(progress.percent));
-  });
-
-  autoUpdater.on('error', (err) => {
-    console.error('autoUpdater error', err);
-    mainWindow.webContents.send('update:error', err.message);
-  });
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
+});
+
+// IPC: Get current cached update state (allows late renderer to catch up)
+ipcMain.handle('update:status', () => {
+  return { ...updateState };
 });
 
 ipcMain.handle('update:install', () => {
