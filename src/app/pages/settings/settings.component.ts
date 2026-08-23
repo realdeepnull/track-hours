@@ -133,19 +133,6 @@ import { version } from '../../../../package.json';
         </div>
       </div>
 
-      <!-- Save button -->
-      <div class="flex items-center gap-3">
-        <button
-          (click)="save()"
-          class="px-6 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors shadow-sm shadow-indigo-500/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400"
-        >
-          {{ 'SETTINGS.SAVE' | translate }}
-        </button>
-        @if (saved()) {
-          <span class="text-sm text-emerald-600 dark:text-emerald-400">✓ {{ 'SETTINGS.SAVED' | translate }}</span>
-        }
-      </div>
-
       <!-- About -->
       <div
         class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm shadow-slate-200/50 dark:shadow-none p-5 text-sm text-slate-500 dark:text-slate-400 space-y-1"
@@ -164,7 +151,6 @@ export class SettingsComponent implements OnInit {
   private readonly translateService = inject(TranslateService);
 
   readonly settings = signal<AppSettings>({ ...DEFAULT_SETTINGS });
-  readonly saved = signal(false);
 
   readonly appVersion = version;
 
@@ -195,6 +181,7 @@ export class SettingsComponent implements OnInit {
 
   toggle(key: 'reminderEnabled' | 'autoSuggestLastUsed'): void {
     this.settings.update((s) => ({ ...s, [key]: !s[key] }));
+    this.applyAndPersist();
   }
 
   updateSetting<K extends keyof AppSettings>(key: K, value: AppSettings[K]): void {
@@ -207,18 +194,16 @@ export class SettingsComponent implements OnInit {
     if (key === 'theme') {
       this.themeService.setTheme(value as 'light' | 'dark');
     }
+    this.applyAndPersist();
   }
 
-  async save(): Promise<void> {
+  private applyAndPersist(): void {
     const s = this.settings();
-    await this.storageService.saveSettings(s);
-    this.translateService.use(s.language);
+    this.storageService.saveSettings(s);
     if (s.reminderEnabled) {
       this.timerService.setupReminders(s.reminderIntervalMinutes);
     } else {
       this.timerService.clearReminders();
     }
-    this.saved.set(true);
-    setTimeout(() => this.saved.set(false), 2000);
   }
 }
