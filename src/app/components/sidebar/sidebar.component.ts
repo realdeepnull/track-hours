@@ -33,7 +33,10 @@ import { version } from '../../../../package.json';
 
       <!-- Running timer indicator -->
       @if (isRunning()) {
-        <div class="mx-3 mt-3 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 px-3 py-2.5">
+        <a
+          routerLink="/timer"
+          class="block mx-3 mt-3 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 px-3 py-2.5 cursor-pointer transition-colors hover:bg-emerald-100 dark:hover:bg-emerald-500/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-400"
+        >
           <div class="flex items-center gap-2">
             <span class="relative flex h-2.5 w-2.5">
               <span
@@ -53,7 +56,7 @@ import { version } from '../../../../package.json';
               {{ runningProjectName() }}
             </div>
           }
-        </div>
+        </a>
       }
 
       <!-- Nav items -->
