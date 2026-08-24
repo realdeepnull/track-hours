@@ -36,9 +36,16 @@ removePackageKeywords: true
 # ---------------------------------------------------------------------------
 # Windows
 # ---------------------------------------------------------------------------
+# artifactName uses a literal "Track-Hours" prefix (not ${productName}, which
+# contains a space) so the installer filename has no spaces.  This keeps the
+# latest.yml entry in sync with the GitHub release asset name — GitHub
+# replaces spaces with dots in asset names, which previously caused a 404
+# during auto-update (latest.yml said "Track-Hours-Setup-0.6.x.exe" but the
+# uploaded asset was "Track.Hours.Setup.0.6.x.exe").
 win:
   target: nsis
   icon: public/icon.ico
+  artifactName: Track-Hours-Setup-${version}.${ext}
 
 nsis:
   oneClick: false
@@ -59,6 +66,7 @@ linux:
         - arm64
   category: Office
   icon: public/icon.png
+  artifactName: Track-Hours-${version}-${arch}.${ext}
   desktop:
     entry:
       MimeType: "x-scheme-handler/trackhours"

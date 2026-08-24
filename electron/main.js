@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Notification, Menu } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
@@ -28,6 +28,23 @@ const updateState = {
 };
 
 app.setAppUserModelId('com.trackhours.app');
+
+// Ensure only one instance of the app is running.  Without this, clicking a
+// Windows toast notification can launch a second instance (because Windows
+// uses the AppUserModelID to activate the app), which opens a duplicate
+// window and may trigger duplicate notifications.
+if (!app.requestSingleInstanceLock()) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    // Someone tried to run a second instance — focus the existing window.
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      if (!mainWindow.isVisible()) mainWindow.show();
+      mainWindow.focus();
+    }
+  });
+}
 
 function getDataDir() {
   return path.join(app.getPath('userData'), 'track-hours-data');
@@ -132,13 +149,6 @@ ipcMain.handle('data:write', (event, filename, data) => {
 // IPC: Get data directory path (for CSV import/export)
 ipcMain.handle('data:getDir', () => {
   return ensureDataDir();
-});
-
-// IPC: Show system notification
-ipcMain.handle('notify', (event, title, body) => {
-  if (Notification.isSupported()) {
-    new Notification({ title, body, icon: getIconPath() }).show();
-  }
 });
 
 // IPC: Save exported file

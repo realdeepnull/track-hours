@@ -1,13 +1,16 @@
 /**
- * Sets the app icon on the development electron.exe so Windows shows
- * the correct icon in the taskbar, Alt-Tab, and notifications during
- * `npm run electron:dev`.
+ * Sets the app icon and product name on the development electron.exe so
+ * Windows shows the correct icon in the taskbar, Alt-Tab, and notifications
+ * during `npm run electron:dev`.
  *
  * In dev mode the process is `node_modules/electron/dist/electron.exe`,
- * which has the default Electron icon.  Windows displays the icon of
- * the process executable in the taskbar — the BrowserWindow icon only
- * affects the window title bar.  We use rcedit to replace the icon
- * resource inside electron.exe.
+ * which has the default Electron icon and "electron" as its product name.
+ * Windows displays the icon of the process executable in the taskbar — the
+ * BrowserWindow icon only affects the window title bar.  Windows also uses
+ * the executable's version-info strings (ProductName/FileDescription) as
+ * the app name shown in the Action Center for notifications.  We use rcedit
+ * to replace both the icon resource and the version strings inside
+ * electron.exe.
  *
  * Run with:  node scripts/set-dev-icon.mjs
  */
@@ -64,7 +67,12 @@ function main() {
     return;
   }
 
-  const result = spawnSync(rcedit, [electronExe, '--set-icon', iconPath], {
+  const result = spawnSync(rcedit, [
+    electronExe,
+    '--set-icon', iconPath,
+    '--set-version-string', 'FileDescription', 'Track Hours',
+    '--set-version-string', 'ProductName', 'Track Hours',
+  ], {
     stdio: 'pipe',
   });
 
@@ -73,7 +81,7 @@ function main() {
     process.exit(1);
   }
 
-  console.log('✓  Dev electron.exe icon set to public/icon.ico');
+  console.log('✓  Dev electron.exe icon and product name set to Track Hours');
 }
 
 main();

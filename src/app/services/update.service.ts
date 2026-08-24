@@ -22,6 +22,12 @@ export class UpdateService {
 
     api.onUpdateError?.((message: string) => {
       this.updateError.set(message);
+      // The update has failed — clear all progress/availability signals so
+      // the "downloading" banner does not reappear after the user dismisses
+      // the error.
+      this.availableVersion.set(null);
+      this.downloadPercent.set(null);
+      this.downloadReady.set(false);
     });
 
     api.onUpdateProgress?.((percent: number) => {
@@ -31,18 +37,21 @@ export class UpdateService {
     // Recover any update events that fired before the renderer
     // registered its IPC listeners (race condition fix).
     const status = await api.getUpdateStatus();
-    if (status.downloaded) {
-      this.downloadReady.set(true);
-      this.downloadPercent.set(100);
-    }
-    if (status.availableVersion) {
-      this.availableVersion.set(status.availableVersion);
-    }
     if (status.error) {
+      // An error has already occurred — only surface the error, not the
+      // stale availability/progress state that preceded it.
       this.updateError.set(status.error);
-    }
-    if (status.downloadPercent !== null) {
-      this.downloadPercent.set(status.downloadPercent);
+    } else {
+      if (status.downloaded) {
+        this.downloadReady.set(true);
+        this.downloadPercent.set(100);
+      }
+      if (status.availableVersion) {
+        this.availableVersion.set(status.availableVersion);
+      }
+      if (status.downloadPercent !== null) {
+        this.downloadPercent.set(status.downloadPercent);
+      }
     }
   }
 

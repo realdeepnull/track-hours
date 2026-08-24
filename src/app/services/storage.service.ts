@@ -7,7 +7,6 @@ declare global {
       readData: (filename: string) => Promise<unknown>;
       writeData: (filename: string, data: unknown) => Promise<boolean>;
       getDataDir: () => Promise<string>;
-      notify: (title: string, body: string) => Promise<void>;
       exportSave: (filename: string, content: unknown) => Promise<{ success: boolean; filePath?: string }>;
       isElectron: boolean;
       onUpdateAvailable: (callback: (version: string) => void) => void;
@@ -97,12 +96,9 @@ export class StorageService {
     return { success: true };
   }
 
-  async notify(title: string, body: string): Promise<void> {
-    if (this.isElectron && window.electronAPI) {
-      await window.electronAPI.notify(title, body);
-    } else if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification(title, { body });
-    }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async notify(_title: string, _body: string): Promise<void> {
+    // Notifications disabled — no desktop notifications are shown.
   }
 
   private async load<T>(filename: string, lsKey: string): Promise<T | null> {
