@@ -54,7 +54,6 @@ nsis:
   createDesktopShortcut: true
   createStartMenuShortcut: true
   deleteAppDataOnUninstall: false
-  runAfterFinish: false
 
 # ---------------------------------------------------------------------------
 # Linux
