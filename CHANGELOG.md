@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.7.0](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.6.5...track-hours-v0.7.0) (2026-08-24)
+
+
+### Features
+
+* **timer:** highlight newly stopped entry in today's list ([d96065a](https://github.com/realdeepnull/track-hours/commit/d96065a65c3d93c6640b9ec54329c86a2d9dcc25))
+
+
+### Bug Fixes
+
+* **electron:** run update installer silently and force-run app after install ([ec96f32](https://github.com/realdeepnull/track-hours/commit/ec96f32483651281c5a5ce1ecd79aa276b0323f5))
+* set explicit rootDir in tsconfig files for TypeScript 6 migration ([8e655c5](https://github.com/realdeepnull/track-hours/commit/8e655c522fba41ac1ed351bcd6edc13ab46537df))
+
 ## [0.6.5](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.6.4...track-hours-v0.6.5) (2026-08-24)
 
 
