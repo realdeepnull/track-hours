@@ -10,12 +10,13 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "electron:dev": "concurrently \"ng serve\" \"wait-on http://localhost:4200 && electron electron/main.js --dev\"",
+    "electron:dev": "concurrently \"ng serve\" \"wait-on http://localhost:4200 && node scripts/set-dev-icon.mjs && electron electron/main.js --dev\"",
     "electron:build": "ng build --configuration electron && electron-builder --publish onTagOrDraft",
     "electron:start": "electron electron/main.js",
-    "electron:run": "ng build --configuration electron && electron electron/main.js",
+    "electron:run": "ng build --configuration electron && node scripts/set-dev-icon.mjs && electron electron/main.js",
     "lint": "ng lint",
-    "icons": "node scripts/generate-icons.mjs"
+    "icons": "node scripts/generate-icons.mjs && node scripts/set-dev-icon.mjs",
+    "postinstall": "node scripts/set-dev-icon.mjs"
   },
   "private": true,
   "packageManager": "npm@11.7.0",

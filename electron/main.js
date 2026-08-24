@@ -1,15 +1,22 @@
 const { app, BrowserWindow, ipcMain, Notification, Menu } = require('electron');
-const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
 
-// Enable updater logging to stderr so update issues are debuggable.
-autoUpdater.logger = console;
-autoUpdater.autoDownload = true;
-autoUpdater.autoInstallOnAppQuit = true;
-
 let mainWindow;
 const isDev = process.argv.includes('--dev');
+
+// Only load electron-updater in packaged builds.  In dev mode
+// app.getVersion() returns the Electron version (e.g. "43.4.1")
+// which is not a valid semver for the updater and causes a crash.
+let autoUpdater = null;
+if (!isDev) {
+  const { autoUpdater: updater } = require('electron-updater');
+  autoUpdater = updater;
+  // Enable updater logging to stderr so update issues are debuggable.
+  autoUpdater.logger = console;
+  autoUpdater.autoDownload = true;
+  autoUpdater.autoInstallOnAppQuit = true;
+}
 
 // Cached update state so the renderer can query it even if it
 // registers its IPC listeners after an event has already fired.
@@ -156,40 +163,43 @@ ipcMain.handle('export:save', (event, filename, content) => {
 
 // Register all autoUpdater listeners BEFORE calling checkForUpdates()
 // to avoid a race condition where events fire before listeners are set.
-autoUpdater.on('update-available', (info) => {
-  updateState.availableVersion = info.version;
-  if (mainWindow && !mainWindow.isDestroyed()) {
-    mainWindow.webContents.send('update:available', info.version);
-  }
-});
+// Only register when autoUpdater is available (packaged builds).
+if (autoUpdater) {
+  autoUpdater.on('update-available', (info) => {
+    updateState.availableVersion = info.version;
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('update:available', info.version);
+    }
+  });
 
-autoUpdater.on('update-downloaded', () => {
-  updateState.downloaded = true;
-  updateState.downloadPercent = 100;
-  if (mainWindow && !mainWindow.isDestroyed()) {
-    mainWindow.webContents.send('update:downloaded');
-  }
-});
+  autoUpdater.on('update-downloaded', () => {
+    updateState.downloaded = true;
+    updateState.downloadPercent = 100;
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('update:downloaded');
+    }
+  });
 
-autoUpdater.on('download-progress', (progress) => {
-  updateState.downloadPercent = Math.round(progress.percent);
-  if (mainWindow && !mainWindow.isDestroyed()) {
-    mainWindow.webContents.send('update:progress', updateState.downloadPercent);
-  }
-});
+  autoUpdater.on('download-progress', (progress) => {
+    updateState.downloadPercent = Math.round(progress.percent);
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('update:progress', updateState.downloadPercent);
+    }
+  });
 
-autoUpdater.on('error', (err) => {
-  console.error('autoUpdater error', err);
-  updateState.error = err.message;
-  if (mainWindow && !mainWindow.isDestroyed()) {
-    mainWindow.webContents.send('update:error', err.message);
-  }
-});
+  autoUpdater.on('error', (err) => {
+    console.error('autoUpdater error', err);
+    updateState.error = err.message;
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('update:error', err.message);
+    }
+  });
+}
 
 app.whenReady().then(() => {
   createWindow();
 
-  if (!isDev) {
+  if (autoUpdater) {
     autoUpdater.checkForUpdates().catch((err) => {
       console.error('checkForUpdates failed:', err);
     });
@@ -206,7 +216,9 @@ ipcMain.handle('update:status', () => {
 });
 
 ipcMain.handle('update:install', () => {
-  autoUpdater.quitAndInstall();
+  if (autoUpdater) {
+    autoUpdater.quitAndInstall();
+  }
 });
 
 app.on('window-all-closed', () => {
