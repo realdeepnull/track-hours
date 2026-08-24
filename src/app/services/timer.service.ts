@@ -1,6 +1,7 @@
 import { Service, OnDestroy, computed, effect, inject, signal } from '@angular/core';
 import { TimeEntryService } from './time-entry.service';
 import { StorageService } from './storage.service';
+import { TimeEntry } from '../models/models';
 
 @Service()
 export class TimerService implements OnDestroy {
@@ -42,12 +43,13 @@ export class TimerService implements OnDestroy {
     this.elapsed.set(0);
   }
 
-  async stop(): Promise<void> {
+  async stop(): Promise<TimeEntry | null> {
     const entry = await this.timeEntryService.stopTimer();
     this.elapsed.set(0);
     if (entry) {
       await this.storage.notify('Zeiterfassung gestoppt', `${this.formatDuration(entry.durationSeconds)} aufgezeichnet`);
     }
+    return entry;
   }
 
   formatDuration(seconds: number): string {

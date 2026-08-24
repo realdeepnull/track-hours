@@ -87,7 +87,10 @@ import { IconComponent } from '../../shared/icon.component';
         </div>
         <ul class="divide-y divide-slate-100 dark:divide-slate-700" role="list">
           @for (entry of todayEntries(); track entry.id) {
-            <li class="px-5 py-3 flex items-center gap-3">
+            <li
+              [attr.data-entry-id]="entry.id"
+              [class.entry-highlight]="highlightedEntryId() === entry.id"
+              class="px-5 py-3 flex items-center gap-3 rounded-lg transition-colors">
               <div class="w-2 h-2 rounded-full shrink-0" [style.background-color]="getProjectColor(entry.projectId)"></div>
               <div class="flex-1 min-w-0">
                 <div class="text-sm font-medium text-slate-700 dark:text-slate-200 truncate">{{ getProjectName(entry.projectId) }} · {{ getTaskName(entry.taskId) }}</div>
@@ -121,6 +124,10 @@ export class TimerComponent implements OnInit {
 
   selectedProjectId = signal('');
   selectedTaskId = signal('');
+
+  /** ID of the most recently stopped entry, for highlight + focus. Cleared after the animation. */
+  private readonly stoppedEntryId = signal<string | null>(null);
+  readonly highlightedEntryId = computed(() => this.stoppedEntryId());
 
   readonly projects = this.projectService.activeProjects;
 
@@ -158,7 +165,15 @@ export class TimerComponent implements OnInit {
   }
 
   async stopTimer(): Promise<void> {
-    await this.timerService.stop();
+    const entry = await this.timerService.stop();
+    if (entry) {
+      this.stoppedEntryId.set(entry.id);
+      setTimeout(() => {
+        if (this.stoppedEntryId() === entry!.id) {
+          this.stoppedEntryId.set(null);
+        }
+      }, 2600);
+    }
   }
 
   getProjectName(id: string): string {

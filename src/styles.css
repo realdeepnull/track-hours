@@ -40,6 +40,33 @@ app-icon {
   display: inline-flex;
 }
 
+/* Brief highlight pulse for newly stopped timer entries */
+@keyframes entry-highlight {
+  0% {
+    background-color: rgb(99 102 241 / 0.25);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.dark .entry-highlight {
+  animation: entry-highlight-dark 2.5s ease-out;
+}
+
+.entry-highlight {
+  animation: entry-highlight 2.5s ease-out;
+}
+
+@keyframes entry-highlight-dark {
+  0% {
+    background-color: rgb(99 102 241 / 0.35);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
 app-icon svg {
   width: 100%;
   height: 100%;
