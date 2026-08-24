@@ -227,7 +227,9 @@ ipcMain.handle('update:status', () => {
 
 ipcMain.handle('update:install', () => {
   if (autoUpdater) {
-    autoUpdater.quitAndInstall();
+    // Silent install + force-run after install so the NSIS installer
+    // runs without showing its wizard UI and the app restarts automatically.
+    autoUpdater.quitAndInstall(true, true);
   }
 });
 
