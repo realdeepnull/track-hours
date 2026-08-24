@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.7.2](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.7.1...track-hours-v0.7.2) (2026-08-24)
+
+
+### Bug Fixes
+
+* **electron:** Undo: Prevent the NSIS installation wizard from appearing after an automatic update ([667b40c](https://github.com/realdeepnull/track-hours/commit/667b40c9491c55152d548f7bbc9da51b0c823961))
+
 ## [0.7.1](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.7.0...track-hours-v0.7.1) (2026-08-24)
 
 
