@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.6.3](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.6.2...track-hours-v0.6.3) (2026-08-24)
+
+
+### Bug Fixes
+
+* **electron:** correct taskbar/notification icons and auto-update error ([579e2a3](https://github.com/realdeepnull/track-hours/commit/579e2a36cab423998e59c2a7b2d9173f7655364b))
+
 ## [0.6.2](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.6.1...track-hours-v0.6.2) (2026-08-23)
 
 
