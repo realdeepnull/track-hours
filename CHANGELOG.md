@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.6.4](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.6.3...track-hours-v0.6.4) (2026-08-24)
+
+
+### Bug Fixes
+
+* **electron:** set dev icon on electron.exe and skip autoUpdater in dev mode ([a1aea2a](https://github.com/realdeepnull/track-hours/commit/a1aea2af32c87623fb249c61fe0215c6f301d1eb))
+
 ## [0.6.3](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.6.2...track-hours-v0.6.3) (2026-08-24)
 
 
