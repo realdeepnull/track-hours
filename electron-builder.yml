@@ -10,6 +10,13 @@ compression: maximum
 # Asar packaging for the renderer + electron main process.
 asar: true
 
+# Icon is placed outside the asar so Windows can read it for the taskbar
+# and notification area.  The main process references it via
+# process.resourcesPath when packaged.
+extraResources:
+  - from: public/icon.ico
+    to: icon.ico
+
 # App source shipped inside the archive.
 files:
   - "dist/**/*"
@@ -64,4 +71,3 @@ publish:
   provider: github
   owner: realdeepnull
   repo: track-hours
-  releaseType: draft

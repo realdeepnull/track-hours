@@ -27,6 +27,15 @@ import { UpdateService } from '../../services/update.service';
         class="fixed bottom-4 right-4 z-50 flex items-center gap-3 rounded-xl bg-rose-600 px-5 py-3 text-white shadow-lg shadow-rose-300/50"
       >
         <span class="text-sm font-medium">{{ 'update.error' | translate }}</span>
+        <span class="text-xs opacity-75">{{ updateService.updateError() }}</span>
+        <button
+          type="button"
+          (click)="updateService.dismissError()"
+          class="rounded-lg bg-white/20 px-2 py-1 text-xs font-semibold text-white hover:bg-white/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/50"
+          [attr.aria-label]="'update.dismiss' | translate"
+        >
+          ✕
+        </button>
       </div>
     } @else if (updateService.availableVersion()) {
       <div

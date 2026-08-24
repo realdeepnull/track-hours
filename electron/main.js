@@ -26,6 +26,22 @@ function getDataDir() {
   return path.join(app.getPath('userData'), 'track-hours-data');
 }
 
+/**
+ * Resolve the app icon path.
+ *
+ * In development the icon lives in the project's `public/` folder.
+ * In a packaged build it is copied to `resources/icon.ico` via the
+ * `extraResources` config in electron-builder.yml, so we use
+ * `process.resourcesPath` there.  This ensures Windows shows the icon
+ * in the taskbar, Alt-Tab, and system notifications.
+ */
+function getIconPath() {
+  if (app.isPackaged) {
+    return path.join(process.resourcesPath, 'icon.ico');
+  }
+  return path.join(__dirname, '..', 'public', 'icon.ico');
+}
+
 function ensureDataDir() {
   const dir = getDataDir();
   if (!fs.existsSync(dir)) {
@@ -40,7 +56,7 @@ function createWindow() {
     height: 800,
     minWidth: 900,
     minHeight: 600,
-    icon: path.join(__dirname, '../public/icon.ico'),
+    icon: getIconPath(),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -114,7 +130,7 @@ ipcMain.handle('data:getDir', () => {
 // IPC: Show system notification
 ipcMain.handle('notify', (event, title, body) => {
   if (Notification.isSupported()) {
-    new Notification({ title, body }).show();
+    new Notification({ title, body, icon: getIconPath() }).show();
   }
 });
 

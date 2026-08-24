@@ -49,4 +49,8 @@ export class UpdateService {
   install(): void {
     window.electronAPI?.installUpdate();
   }
+
+  dismissError(): void {
+    this.updateError.set(null);
+  }
 }

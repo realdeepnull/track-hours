@@ -3,7 +3,8 @@
     "available": "Update {{version}} wird heruntergeladen…",
     "ready": "Update bereit - bitte neu starten.",
     "restart": "Neu starten",
-    "error": "Update fehlgeschlagen. Bitte manuell herunterladen."
+    "error": "Update fehlgeschlagen. Bitte manuell herunterladen.",
+    "dismiss": "Schließen"
   },
   "APP": {
     "SUBTITLE": "Zeiterfassung"
