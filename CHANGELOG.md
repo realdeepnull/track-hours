@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.6.5](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.6.4...track-hours-v0.6.5) (2026-08-24)
+
+
+### Bug Fixes
+
+* **electron:** fix auto-update 404, remove notifications, add single-instance lock ([1bff305](https://github.com/realdeepnull/track-hours/commit/1bff305a719f34234e8a8d59ae1efd52b04e3b16))
+
 ## [0.6.4](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.6.3...track-hours-v0.6.4) (2026-08-24)
 
 
