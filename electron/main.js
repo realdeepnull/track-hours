@@ -15,7 +15,12 @@ if (!isDev) {
   // Enable updater logging to stderr so update issues are debuggable.
   autoUpdater.logger = console;
   autoUpdater.autoDownload = true;
-  autoUpdater.autoInstallOnAppQuit = true;
+  // Disable the built-in "install on quit" — we defer the install to the
+  // next launch instead (see below) to avoid a race condition where the
+  // NSIS uninstaller runs while the old process is still shutting down
+  // and leaves the installation directory in a broken state, which causes
+  // a generic Electron window to appear after the restart.
+  autoUpdater.autoInstallOnAppQuit = false;
 }
 
 // Cached update state so the renderer can query it even if it
@@ -106,53 +111,8 @@ if (!app.requestSingleInstanceLock()) {
       show: false,
     });
 
-    // Track whether the window has already been shown so we don't
-    // accidentally show it twice (e.g. on a successful retry after
-    // an initial did-finish-load).
-    let windowShown = false;
-    function showWindow() {
-      if (!windowShown && mainWindow && !mainWindow.isDestroyed()) {
-        windowShown = true;
-        mainWindow.show();
-      }
-    }
-
-    // Only show the window once the page has *successfully* loaded.
-    // Using "ready-to-show" is NOT sufficient — it also fires for
-    // Electron's internal error page (which looks like a "generic
-    // Electron window"), so the user would briefly see that error
-    // page before the retry kicks in.
-    mainWindow.webContents.on('did-finish-load', () => {
-      showWindow();
-    });
-
-    // Retry counter for failed loads (e.g. during the brief window
-    // after an NSIS auto-update when files are still being flushed
-    // to disk and the asar archive may be briefly locked).
-    let loadRetries = 0;
-    const MAX_RETRIES = 5;
-
     mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription, url) => {
       console.error('did-fail-load:', errorCode, errorDescription, url);
-      // Don't retry in dev mode — localhost:4200 might not be ready yet
-      // and the Angular dev server will auto-reload once it is.
-      if (isDev) return;
-
-      if (loadRetries < MAX_RETRIES && mainWindow && !mainWindow.isDestroyed()) {
-        loadRetries++;
-        const delay = 500 * loadRetries; // 500ms, 1s, 1.5s, 2s, 2.5s
-        console.log(`Retrying loadFile in ${delay}ms (attempt ${loadRetries}/${MAX_RETRIES})`);
-        setTimeout(() => {
-          if (mainWindow && !mainWindow.isDestroyed()) {
-            loadApp();
-          }
-        }, delay);
-      } else {
-        console.error('Max retries reached — unable to load the app.');
-        // Show the window anyway so the user is not left with an
-        // invisible app; they will see the error page and can report it.
-        showWindow();
-      }
     });
 
     mainWindow.webContents.on('render-process-gone', (event, details) => {
@@ -163,29 +123,31 @@ if (!app.requestSingleInstanceLock()) {
       console.error('renderer crashed');
     });
 
-    function loadApp() {
-      if (isDev) {
-        mainWindow.loadURL('http://localhost:4200');
-        mainWindow.webContents.openDevTools();
-      } else {
-        const indexPath = path.join(__dirname, '..', 'dist', 'track-hours', 'browser', 'index.html');
-        console.log('Loading:', indexPath);
-        mainWindow.loadFile(indexPath).catch((err) => {
-          console.error('loadFile promise rejected:', err);
-          // The did-fail-load handler above will handle the retry logic.
-          // This catch prevents an unhandled promise rejection.
-        });
-      }
+    if (isDev) {
+      mainWindow.loadURL('http://localhost:4200');
+      mainWindow.webContents.openDevTools();
+    } else {
+      const indexPath = path.join(__dirname, '..', 'dist', 'track-hours', 'browser', 'index.html');
+      console.log('Loading:', indexPath);
+      // Handle loadFile rejection — without this the window shows a generic
+      // Electron error page if the file is not yet available (e.g. during the
+      // brief window after an NSIS auto-update when files are still being
+      // flushed to disk).
+      mainWindow.loadFile(indexPath).catch((err) => {
+        console.error('Failed to load index.html:', err);
+        // Retry once after a short delay to handle potential file-lock races
+        // during the auto-update restart.
+        setTimeout(() => {
+          mainWindow.loadFile(indexPath).catch((err2) => {
+            console.error('Retry failed:', err2);
+          });
+        }, 1000);
+      });
     }
 
-    // Fallback: if did-finish-load never fires within 8 seconds (e.g.
-    // all retries silently failed), show the window so the app does
-    // not appear to hang invisibly.
-    setTimeout(() => {
-      showWindow();
-    }, 8000);
-
-    loadApp();
+    mainWindow.once('ready-to-show', () => {
+      mainWindow.show();
+    });
 
     Menu.setApplicationMenu(null);
   }
@@ -286,10 +248,99 @@ if (!app.requestSingleInstanceLock()) {
   }
 
   // ---------------------------------------------------------------------------
+  // "Install on next launch" support
+  // ---------------------------------------------------------------------------
+  // electron-updater 6.x doesn't have autoInstallEvent = "onNextLaunch", so
+  // we implement it manually.  When the user clicks "Restart & Update", we
+  // DON'T call quitAndInstall() (which spawns the NSIS installer while this
+  // process is still quitting — a race that can leave the installation
+  // directory in a broken state and cause a generic Electron window after
+  // restart).  Instead, we set a flag file and quit.  On the next launch,
+  // we check for a pending update installer and run it BEFORE creating any
+  // window, when no files are locked.
+
+  const pendingUpdateFile = 'pending-update.json';
+
+  function getPendingUpdatePath() {
+    return path.join(getDataDir(), pendingUpdateFile);
+  }
+
+  /**
+   * Check whether a pending update was left over from a previous session
+   * and, if so, run the NSIS installer silently and quit.  The installer
+   * will replace the app files (no locks held now) and re-launch the app
+   * via --force-run.
+   *
+   * Returns true if a pending install was started (app will quit).
+   */
+  function installPendingUpdate() {
+    const pendingPath = getPendingUpdatePath();
+    if (!fs.existsSync(pendingPath)) {
+      return false;
+    }
+
+    let pending;
+    try {
+      pending = JSON.parse(fs.readFileSync(pendingPath, 'utf-8'));
+    } catch (e) {
+      console.error('Failed to read pending update file:', e);
+      try { fs.unlinkSync(pendingPath); } catch (_) { /* ignore */ }
+      return false;
+    }
+
+    const installerPath = pending.installerPath;
+    if (!installerPath || !fs.existsSync(installerPath)) {
+      console.log('Pending update installer not found, removing flag file');
+      try { fs.unlinkSync(pendingPath); } catch (_) { /* ignore */ }
+      return false;
+    }
+
+    console.log('Installing pending update from:', installerPath);
+
+    // Build NSIS installer arguments, mirroring what electron-updater
+    // would pass: --updated (skip wizard pages) /S (silent) --force-run
+    // (restart app after install).
+    const args = ['--updated', '/S', '--force-run'];
+    if (pending.packageFile && fs.existsSync(pending.packageFile)) {
+      args.push(`--package-file=${pending.packageFile}`);
+    }
+
+    try {
+      const { spawn } = require('child_process');
+      const child = spawn(installerPath, args, {
+        detached: true,
+        stdio: 'ignore',
+      });
+      child.on('error', (err) => {
+        console.error('Failed to spawn update installer:', err);
+      });
+      child.unref();
+    } catch (e) {
+      console.error('Failed to start update installer:', e);
+      return false;
+    }
+
+    // Quit immediately — the detached installer will replace files and
+    // re-launch the app.
+    app.quit();
+    return true;
+  }
+
+  // ---------------------------------------------------------------------------
   // App lifecycle
   // ---------------------------------------------------------------------------
 
-  app.whenReady().then(() => {
+  app.whenReady().then(async () => {
+    // If an update was downloaded in a previous session, install it now
+    // (before creating any window).  This is the "install on next launch"
+    // pattern: instead of running the NSIS installer while the old process
+    // is still quitting (which can race with file locks and leave the
+    // installation directory in a broken state), we defer the install to
+    // the next clean launch where no files are locked.
+    if (!isDev && installPendingUpdate()) {
+      return;
+    }
+
     createWindow();
 
     if (autoUpdater) {
@@ -310,10 +361,34 @@ if (!app.requestSingleInstanceLock()) {
 
   ipcMain.handle('update:install', () => {
     if (autoUpdater) {
-      // Silent install + force-run after install so the NSIS installer
-      // runs without showing its wizard UI and the app restarts
-      // automatically.
-      autoUpdater.quitAndInstall(true, true);
+      // Don't call quitAndInstall() — that spawns the NSIS installer while
+      // this process is still quitting, which can race with file locks and
+      // leave the installation in a broken state (showing a generic
+      // Electron window after restart).  Instead, write a flag file with
+      // the installer path and quit.  On the next launch, the app will
+      // detect the pending update and run the installer before any window
+      // is created, when no files are locked.
+      const installerPath = autoUpdater.installerPath;
+      if (!installerPath) {
+        console.error('No installer path available');
+        return;
+      }
+
+      const pendingData = {
+        installerPath,
+        packageFile: autoUpdater.downloadedUpdateHelper?.packageFile || undefined,
+        timestamp: Date.now(),
+      };
+
+      try {
+        ensureDataDir();
+        fs.writeFileSync(getPendingUpdatePath(), JSON.stringify(pendingData, null, 2), 'utf-8');
+        console.log('Pending update written, quitting app');
+      } catch (e) {
+        console.error('Failed to write pending update file:', e);
+      }
+
+      app.quit();
     }
   });
 
