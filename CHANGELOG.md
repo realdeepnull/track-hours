@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.7.4](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.7.3...track-hours-v0.7.4) (2026-08-25)
+
+
+### Bug Fixes
+
+* replace to-ico dependency with built-in ICO encoder ([9ca4e91](https://github.com/realdeepnull/track-hours/commit/9ca4e91a99cfe3b21e81a2ee0e1e0e6e136e51b9))
+
 ## [0.7.3](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.7.2...track-hours-v0.7.3) (2026-08-25)
 
 
