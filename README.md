@@ -4,6 +4,10 @@ A modern, offline-first desktop application for tracking time across projects an
 
 Whether you are a freelancer, developer, or anyone who needs to keep track of how their time is spent, **Track Hours** gives you a clean and distraction-free environment to log, review, and export your work hours — without any cloud dependency.
 
+| Timer                           | Project                              |
+| ------------------------------- | ------------------------------------ |
+| ![Timer](public/gifs/timer.gif) | ![Projects](public/gifs/project.gif) |
+
 ---
 
 ## Features
@@ -18,14 +22,6 @@ Whether you are a freelancer, developer, or anyone who needs to keep track of ho
 - **Offline-first** — All data is stored locally; no account or internet connection required
 - **Themes & i18n** — Dark/light theme, English and German interface
 - **Auto-Update** — Automatic updates via GitHub releases (Electron)
-
----
-
-## Screenshots
-
-| Dashboard                                          | Timer                                      |
-| -------------------------------------------------- | ------------------------------------------ |
-| ![Dashboard](public/Track%20Hours%20Dashboard.png) | ![Timer](public/Track%20Hours%20Timer.png) |
 
 ---
 
