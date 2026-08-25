@@ -40,6 +40,19 @@ Full setup, scripts, and troubleshooting: **[Getting Started](docs/getting-start
 
 ---
 
+## Download
+
+Pre-built installers are available for **Windows** and **Linux** via the [GitHub Releases page](https://github.com/realdeepnull/track-hours/releases).
+
+| Platform | Artifact                     |
+| -------- | ---------------------------- |
+| Windows  | `Track-Hours-Setup-x.x.x.exe` |
+| Linux    | `Track-Hours-x.x.x.AppImage`  |
+
+> macOS builds are not currently provided.
+
+---
+
 ## Tech Stack
 
 | Layer          | Technology                           |
