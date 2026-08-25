@@ -48,12 +48,13 @@ win:
   artifactName: Track-Hours-Setup-${version}.${ext}
 
 nsis:
-  oneClick: false
+  oneClick: true
   perMachine: false
-  allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
   createStartMenuShortcut: true
   deleteAppDataOnUninstall: false
+  runAfterFinish: true
+  differentialPackage: true
 
 # ---------------------------------------------------------------------------
 # Linux
