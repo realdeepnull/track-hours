@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.7.3](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.7.2...track-hours-v0.7.3) (2026-08-25)
+
+
+### Bug Fixes
+
+* **electron:** prevent generic Electron window after auto-update ([97441f1](https://github.com/realdeepnull/track-hours/commit/97441f13dbefbb329d0ed2145b1163683805fdfd))
+
 ## [0.7.2](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.7.1...track-hours-v0.7.2) (2026-08-24)
 
 
