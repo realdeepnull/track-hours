@@ -106,8 +106,53 @@ if (!app.requestSingleInstanceLock()) {
       show: false,
     });
 
+    // Track whether the window has already been shown so we don't
+    // accidentally show it twice (e.g. on a successful retry after
+    // an initial did-finish-load).
+    let windowShown = false;
+    function showWindow() {
+      if (!windowShown && mainWindow && !mainWindow.isDestroyed()) {
+        windowShown = true;
+        mainWindow.show();
+      }
+    }
+
+    // Only show the window once the page has *successfully* loaded.
+    // Using "ready-to-show" is NOT sufficient — it also fires for
+    // Electron's internal error page (which looks like a "generic
+    // Electron window"), so the user would briefly see that error
+    // page before the retry kicks in.
+    mainWindow.webContents.on('did-finish-load', () => {
+      showWindow();
+    });
+
+    // Retry counter for failed loads (e.g. during the brief window
+    // after an NSIS auto-update when files are still being flushed
+    // to disk and the asar archive may be briefly locked).
+    let loadRetries = 0;
+    const MAX_RETRIES = 5;
+
     mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription, url) => {
       console.error('did-fail-load:', errorCode, errorDescription, url);
+      // Don't retry in dev mode — localhost:4200 might not be ready yet
+      // and the Angular dev server will auto-reload once it is.
+      if (isDev) return;
+
+      if (loadRetries < MAX_RETRIES && mainWindow && !mainWindow.isDestroyed()) {
+        loadRetries++;
+        const delay = 500 * loadRetries; // 500ms, 1s, 1.5s, 2s, 2.5s
+        console.log(`Retrying loadFile in ${delay}ms (attempt ${loadRetries}/${MAX_RETRIES})`);
+        setTimeout(() => {
+          if (mainWindow && !mainWindow.isDestroyed()) {
+            loadApp();
+          }
+        }, delay);
+      } else {
+        console.error('Max retries reached — unable to load the app.');
+        // Show the window anyway so the user is not left with an
+        // invisible app; they will see the error page and can report it.
+        showWindow();
+      }
     });
 
     mainWindow.webContents.on('render-process-gone', (event, details) => {
@@ -118,31 +163,29 @@ if (!app.requestSingleInstanceLock()) {
       console.error('renderer crashed');
     });
 
-    if (isDev) {
-      mainWindow.loadURL('http://localhost:4200');
-      mainWindow.webContents.openDevTools();
-    } else {
-      const indexPath = path.join(__dirname, '..', 'dist', 'track-hours', 'browser', 'index.html');
-      console.log('Loading:', indexPath);
-      // Handle loadFile rejection — without this the window shows a generic
-      // Electron error page if the file is not yet available (e.g. during the
-      // brief window after an NSIS auto-update when files are still being
-      // flushed to disk).
-      mainWindow.loadFile(indexPath).catch((err) => {
-        console.error('Failed to load index.html:', err);
-        // Retry once after a short delay to handle potential file-lock races
-        // during the auto-update restart.
-        setTimeout(() => {
-          mainWindow.loadFile(indexPath).catch((err2) => {
-            console.error('Retry failed:', err2);
-          });
-        }, 1000);
-      });
+    function loadApp() {
+      if (isDev) {
+        mainWindow.loadURL('http://localhost:4200');
+        mainWindow.webContents.openDevTools();
+      } else {
+        const indexPath = path.join(__dirname, '..', 'dist', 'track-hours', 'browser', 'index.html');
+        console.log('Loading:', indexPath);
+        mainWindow.loadFile(indexPath).catch((err) => {
+          console.error('loadFile promise rejected:', err);
+          // The did-fail-load handler above will handle the retry logic.
+          // This catch prevents an unhandled promise rejection.
+        });
+      }
     }
 
-    mainWindow.once('ready-to-show', () => {
-      mainWindow.show();
-    });
+    // Fallback: if did-finish-load never fires within 8 seconds (e.g.
+    // all retries silently failed), show the window so the app does
+    // not appear to hang invisibly.
+    setTimeout(() => {
+      showWindow();
+    }, 8000);
+
+    loadApp();
 
     Menu.setApplicationMenu(null);
   }
