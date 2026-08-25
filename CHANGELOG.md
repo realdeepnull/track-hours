@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.7.6](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.7.5...track-hours-v0.7.6) (2026-08-25)
+
+
+### Bug Fixes
+
+* **electron:** defer update install to next launch to avoid broken installation ([44b89e2](https://github.com/realdeepnull/track-hours/commit/44b89e23cc6ccc24a8efbc5070662a6461dc2b9d))
+
 ## [0.7.5](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.7.4...track-hours-v0.7.5) (2026-08-25)
 
 
