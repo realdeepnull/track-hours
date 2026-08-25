@@ -28,6 +28,7 @@ files:
   - "!**/.npmignore"
   - "!**/.eslintrc"
   - "!**/.editorconfig"
+  - "!public/gifs/**"
 
 # Remove package.json fields that are only needed at dev time.
 removePackageScripts: true
