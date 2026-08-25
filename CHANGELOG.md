@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.7.5](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.7.4...track-hours-v0.7.5) (2026-08-25)
+
+
+### Bug Fixes
+
+* **electron:** show window only after successful load, retry on file-lock during update ([c0318bb](https://github.com/realdeepnull/track-hours/commit/c0318bb80a271160fa074df18e44f98a43cc191b))
+
 ## [0.7.4](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.7.3...track-hours-v0.7.4) (2026-08-25)
 
 
