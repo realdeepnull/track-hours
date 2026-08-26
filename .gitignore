@@ -51,10 +51,11 @@ AGENTS.md
 skills-lock.json
 .agents
 
-public/old
+# docs
+docs/tooling-selection.md
 
-# Generated icons (built from source via `npm run icons`)
+# public
+public/old
 public/iconv1.png
 public/iconv1.ico
 public/icon-512x512v1.png
-main.js

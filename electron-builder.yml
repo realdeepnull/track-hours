@@ -8,7 +8,12 @@ directories:
 compression: maximum
 
 # Asar packaging for the renderer + electron main process.
+# Required for EnableEmbeddedAsarIntegrityValidation fuse.
 asar: true
+
+# Flip Electron Fuses on the built binary to harden against runtime
+# tampering (ELECTRON_RUN_AS_NODE, --inspect, asar integrity bypass).
+afterPack: ./scripts/flip-fuses.mjs
 
 # Icon is placed outside the asar so Windows can read it for the taskbar
 # and notification area.  The main process references it via
