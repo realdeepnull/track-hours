@@ -30,6 +30,8 @@ const updateState = {
   downloaded: false,
   error: null,
   downloadPercent: null,
+  checking: false,
+  notAvailable: false,
 };
 
 app.setAppUserModelId('com.trackhours.app');
@@ -216,18 +218,26 @@ if (!app.requestSingleInstanceLock()) {
   // to avoid a race condition where events fire before listeners are set.
   // Only register when autoUpdater is available (packaged builds).
   if (autoUpdater) {
+    autoUpdater.on('checking-for-update', () => {
+      updateState.checking = true;
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('update:checking');
+      }
+    });
+
     autoUpdater.on('update-available', (info) => {
       updateState.availableVersion = info.version;
+      updateState.notAvailable = false;
       if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.webContents.send('update:available', info.version);
       }
     });
 
-    autoUpdater.on('update-downloaded', () => {
-      updateState.downloaded = true;
-      updateState.downloadPercent = 100;
+    autoUpdater.on('update-not-available', (info) => {
+      updateState.notAvailable = true;
+      updateState.checking = false;
       if (mainWindow && !mainWindow.isDestroyed()) {
-        mainWindow.webContents.send('update:downloaded');
+        mainWindow.webContents.send('update:not-available', info.version);
       }
     });
 
@@ -238,9 +248,18 @@ if (!app.requestSingleInstanceLock()) {
       }
     });
 
+    autoUpdater.on('update-downloaded', (info) => {
+      updateState.downloaded = true;
+      updateState.downloadPercent = 100;
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('update:downloaded', info.version);
+      }
+    });
+
     autoUpdater.on('error', (err) => {
       console.error('autoUpdater error', err);
       updateState.error = err.message;
+      updateState.checking = false;
       if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.webContents.send('update:error', err.message);
       }

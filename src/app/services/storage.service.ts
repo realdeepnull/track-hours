@@ -10,7 +10,9 @@ declare global {
       exportSave: (filename: string, content: unknown) => Promise<{ success: boolean; filePath?: string }>;
       isElectron: boolean;
       onUpdateAvailable: (callback: (version: string) => void) => void;
-      onUpdateDownloaded: (callback: () => void) => void;
+      onUpdateDownloaded: (callback: (version: string) => void) => void;
+      onUpdateNotAvailable?: (callback: (version: string) => void) => void;
+      onCheckingForUpdate?: (callback: () => void) => void;
       onUpdateError?: (callback: (message: string) => void) => void;
       onUpdateProgress?: (callback: (percent: number) => void) => void;
       getUpdateStatus: () => Promise<{
@@ -18,6 +20,8 @@ declare global {
         downloaded: boolean;
         error: string | null;
         downloadPercent: number | null;
+        checking: boolean;
+        notAvailable: boolean;
       }>;
       installUpdate: () => void;
     };
