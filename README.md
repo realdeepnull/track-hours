@@ -1,6 +1,10 @@
-# Track Hours
+<p align="center">
+  <img src="public/icon-512x512.png" alt="Track Hours logo" width="120" />
+</p>
 
-A modern, offline-first desktop application for tracking time across projects and tasks — built with Angular and Electron.
+<h1 align="center">Track Hours</h1>
+
+A modern, offline-first desktop application for tracking time across projects and tasks.
 
 Whether you are a freelancer, developer, or anyone who needs to keep track of how their time is spent, **Track Hours** gives you a clean and distraction-free environment to log, review, and export your work hours — without any cloud dependency.
 
@@ -44,8 +48,8 @@ Full setup, scripts, and troubleshooting: **[Getting Started](docs/getting-start
 
 Pre-built installers are available for **Windows** and **Linux** via the [GitHub Releases page](https://github.com/realdeepnull/track-hours/releases).
 
-| Platform | Artifact                     |
-| -------- | ---------------------------- |
+| Platform | Artifact                      |
+| -------- | ----------------------------- |
 | Windows  | `Track-Hours-Setup-x.x.x.exe` |
 | Linux    | `Track-Hours-x.x.x.AppImage`  |
 
