@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.8.1](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.8.0...track-hours-v0.8.1) (2026-08-26)
+
+
+### Bug Fixes
+
+* prevent infinite startup loop and wrong install dir in auto-updater ([4ea4f0c](https://github.com/realdeepnull/track-hours/commit/4ea4f0c8679b60e4b3e08f71a867ef2d3c696638))
+
 ## [0.8.0](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.7.6...track-hours-v0.8.0) (2026-08-26)
 
 
