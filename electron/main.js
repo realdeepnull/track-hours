@@ -353,6 +353,60 @@ if (!app.requestSingleInstanceLock()) {
 
     console.log(`Installing pending update from: ${installerPath} (attempt ${attempts}/${MAX_PENDING_UPDATE_ATTEMPTS})`);
 
+    // Show a splash window so the user sees feedback during the
+    // installation.  Without this, the app launches, spawns the NSIS
+    // installer, and immediately quits — the user sees nothing until
+    // the NSIS SpiderBanner appears (which may take a second or two).
+    const splashWindow = new BrowserWindow({
+      width: 400,
+      height: 180,
+      frame: false,
+      resizable: false,
+      minimizable: false,
+      maximizable: false,
+      center: true,
+      show: true,
+      alwaysOnTop: true,
+      backgroundColor: '#f4f5f7',
+      webPreferences: {
+        contextIsolation: true,
+        nodeIntegration: false,
+        sandbox: true,
+      },
+    });
+
+    splashWindow.loadURL('data:text/html;charset=utf-8,' + encodeURIComponent(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body {
+            margin: 0; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            height: 100vh; font-family: -apple-system, BlinkMacSystemFont,
+            'Segoe UI', Roboto, sans-serif;
+            background: #f4f5f7; color: #1e293b;
+          }
+          .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid #e2e8f0; border-top-color: #4f46e5;
+            border-radius: 50%; animation: spin 0.8s linear infinite;
+            margin-bottom: 16px;
+          }
+          @keyframes spin { to { transform: rotate(360deg); } }
+          .title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+          .hint  { font-size: 13px; color: #64748b; }
+        </style>
+      </head>
+      <body>
+        <div class="spinner"></div>
+        <div class="title">Installing update…</div>
+        <div class="hint">The app will restart shortly. Please do not close this window.</div>
+      </body>
+      </html>
+    `));
+
     // Build NSIS installer arguments, mirroring what electron-updater
     // would pass: --updated (skip wizard pages) --force-run (restart app
     // after install).  We intentionally omit /S (silent) so the NSIS
@@ -392,14 +446,19 @@ if (!app.requestSingleInstanceLock()) {
       child.unref();
     } catch (e) {
       console.error('Failed to start update installer:', e);
+      splashWindow.destroy();
       // The flag file is already deleted above, so the app will start
       // normally on the next launch instead of looping.
       return false;
     }
 
-    // Quit immediately — the detached installer will replace files and
-    // re-launch the app.
-    app.quit();
+    // Quit after a short delay so the splash window is visible while
+    // the NSIS installer starts up.  The detached installer will replace
+    // files and re-launch the app via --force-run.
+    setTimeout(() => {
+      splashWindow.destroy();
+      app.quit();
+    }, 2000);
     return true;
   }
 
@@ -465,9 +524,9 @@ if (!app.requestSingleInstanceLock()) {
         console.error('Failed to write pending update file:', e);
       }
 
-      // Give the renderer 800ms to show the "installing" overlay before
-      // the app closes.  Without this the window disappears instantly
-      // and the user has no idea an installation is in progress.
+      // Give the renderer 800ms to show the "preparing to quit" overlay
+      // before the app closes.  Without this the window disappears
+      // instantly and the user has no idea what is happening.
       setTimeout(() => app.quit(), 800);
     }
   });
