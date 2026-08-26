@@ -3,6 +3,8 @@
     "available": "Downloading update {{version}}…",
     "ready": "Update ready - please restart.",
     "restart": "Restart",
+    "installing": "Installing update…",
+    "installingHint": "The app will restart in a moment. Please do not close it.",
     "error": "Update failed. Please download manually.",
     "dismiss": "Dismiss"
   },

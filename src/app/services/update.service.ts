@@ -8,6 +8,7 @@ export class UpdateService {
   readonly downloadPercent = signal<number | null>(null);
   readonly checking = signal(false);
   readonly notAvailable = signal(false);
+  readonly installing = signal(false);
 
   async init(): Promise<void> {
     const api = window.electronAPI;
@@ -77,6 +78,7 @@ export class UpdateService {
   }
 
   install(): void {
+    this.installing.set(true);
     window.electronAPI?.installUpdate();
   }
 

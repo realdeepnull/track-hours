@@ -354,9 +354,11 @@ if (!app.requestSingleInstanceLock()) {
     console.log(`Installing pending update from: ${installerPath} (attempt ${attempts}/${MAX_PENDING_UPDATE_ATTEMPTS})`);
 
     // Build NSIS installer arguments, mirroring what electron-updater
-    // would pass: --updated (skip wizard pages) /S (silent) --force-run
-    // (restart app after install).
-    const args = ['--updated', '/S', '--force-run'];
+    // would pass: --updated (skip wizard pages) --force-run (restart app
+    // after install).  We intentionally omit /S (silent) so the NSIS
+    // oneClick installer shows its own progress window — without this the
+    // user sees no feedback at all during the installation phase.
+    const args = ['--updated', '--force-run'];
     if (pending.packageFile && fs.existsSync(pending.packageFile)) {
       args.push(`--package-file=${pending.packageFile}`);
     }
@@ -463,7 +465,10 @@ if (!app.requestSingleInstanceLock()) {
         console.error('Failed to write pending update file:', e);
       }
 
-      app.quit();
+      // Give the renderer 800ms to show the "installing" overlay before
+      // the app closes.  Without this the window disappears instantly
+      // and the user has no idea an installation is in progress.
+      setTimeout(() => app.quit(), 800);
     }
   });
 

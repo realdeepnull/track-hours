@@ -6,7 +6,19 @@ import { UpdateService } from '../../services/update.service';
   selector: 'app-update-banner',
   imports: [TranslatePipe],
   template: `
-    @if (updateService.downloadReady()) {
+    @if (updateService.installing()) {
+      <div
+        role="status"
+        aria-live="polite"
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm"
+      >
+        <div class="flex flex-col items-center gap-4 rounded-2xl bg-white dark:bg-slate-800 px-8 py-6 shadow-2xl">
+          <div class="h-10 w-10 animate-spin rounded-full border-4 border-slate-200 dark:border-slate-600 border-t-indigo-600"></div>
+          <span class="text-base font-semibold text-slate-900 dark:text-slate-100">{{ 'update.installing' | translate }}</span>
+          <span class="text-sm text-slate-500 dark:text-slate-400">{{ 'update.installingHint' | translate }}</span>
+        </div>
+      </div>
+    } @if (updateService.downloadReady()) {
       <div
         role="status"
         aria-live="polite"

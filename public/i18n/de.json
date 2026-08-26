@@ -3,6 +3,8 @@
     "available": "Update {{version}} wird heruntergeladen…",
     "ready": "Update bereit - bitte neu starten.",
     "restart": "Neu starten",
+    "installing": "Update wird installiert…",
+    "installingHint": "Die Anwendung wird in einem Moment neu gestartet. Bitte nicht schließen.",
     "error": "Update fehlgeschlagen. Bitte manuell herunterladen.",
     "dismiss": "Schließen"
   },
