@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.9.0](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.8.1...track-hours-v0.9.0) (2026-08-26)
+
+
+### Features
+
+* **updater:** handle checking-for-update and update-not-available events ([4d9e599](https://github.com/realdeepnull/track-hours/commit/4d9e599082eca0c2aebc02f68a0fcb545d79735b))
+
 ## [0.8.1](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.8.0...track-hours-v0.8.1) (2026-08-26)
 
 
