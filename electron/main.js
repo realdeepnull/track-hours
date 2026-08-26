@@ -265,11 +265,30 @@ if (!app.requestSingleInstanceLock()) {
     return path.join(getDataDir(), pendingUpdateFile);
   }
 
+  // Maximum number of times we'll attempt to run a pending update installer
+  // before giving up and launching the app normally.  Without this limit a
+  // failing installer (e.g. one that writes to the wrong directory due to a
+  // corrupted NSIS `--updated` context) causes an infinite startup loop:
+  // launch → read pending → spawn installer → quit → installer fails →
+  // launch → read pending → …  The app never reaches createWindow().
+  const MAX_PENDING_UPDATE_ATTEMPTS = 3;
+  // Discard a pending update if it is older than this (ms) — the installer
+  // file may have been cleaned up by the updater or the OS since then.
+  const PENDING_UPDATE_MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24 hours
+
   /**
    * Check whether a pending update was left over from a previous session
    * and, if so, run the NSIS installer silently and quit.  The installer
    * will replace the app files (no locks held now) and re-launch the app
    * via --force-run.
+   *
+   * CRITICAL: The pending-update.json flag file is ALWAYS deleted after
+   * spawning the installer (or on any error).  The installer is detached
+   * so we cannot know whether it succeeded.  If we left the flag file in
+   * place and the installer failed, the next launch would read the same
+   * file and try again — creating an infinite loop that prevents the app
+   * from ever starting.  Instead we track the attempt count in the file
+   * and bail out after MAX_PENDING_UPDATE_ATTEMPTS tries.
    *
    * Returns true if a pending install was started (app will quit).
    */
@@ -288,6 +307,24 @@ if (!app.requestSingleInstanceLock()) {
       return false;
     }
 
+    // --- Guard: attempt count — prevent infinite startup loop -----------
+    const attempts = (pending.attempts || 0) + 1;
+    if (attempts > MAX_PENDING_UPDATE_ATTEMPTS) {
+      console.error(
+        `Pending update has been attempted ${attempts - 1} times already, ` +
+        'giving up to avoid a startup loop.  Removing flag file.'
+      );
+      try { fs.unlinkSync(pendingPath); } catch (_) { /* ignore */ }
+      return false;
+    }
+
+    // --- Guard: age — discard stale pending updates --------------------
+    if (pending.timestamp && (Date.now() - pending.timestamp) > PENDING_UPDATE_MAX_AGE_MS) {
+      console.log('Pending update is older than 24h, discarding.');
+      try { fs.unlinkSync(pendingPath); } catch (_) { /* ignore */ }
+      return false;
+    }
+
     const installerPath = pending.installerPath;
     if (!installerPath || !fs.existsSync(installerPath)) {
       console.log('Pending update installer not found, removing flag file');
@@ -295,7 +332,7 @@ if (!app.requestSingleInstanceLock()) {
       return false;
     }
 
-    console.log('Installing pending update from:', installerPath);
+    console.log(`Installing pending update from: ${installerPath} (attempt ${attempts}/${MAX_PENDING_UPDATE_ATTEMPTS})`);
 
     // Build NSIS installer arguments, mirroring what electron-updater
     // would pass: --updated (skip wizard pages) /S (silent) --force-run
@@ -303,6 +340,23 @@ if (!app.requestSingleInstanceLock()) {
     const args = ['--updated', '/S', '--force-run'];
     if (pending.packageFile && fs.existsSync(pending.packageFile)) {
       args.push(`--package-file=${pending.packageFile}`);
+    }
+
+    // Pass the /D parameter so NSIS extracts to the current install
+    // directory rather than falling back to a default path.  Without
+    // this, the NSIS oneClick installer may install to the wrong
+    // directory (e.g. a build output folder if the registry
+    // InstallLocation is empty and the uninstaller path points to a
+    // stale location).  /D must be the LAST parameter and the path
+    // must not contain quotes.
+    const installDir = path.dirname(app.getPath('exe'));
+    args.push(`/D=${installDir}`);
+
+    // ALWAYS delete the flag file BEFORE spawning the installer.  The
+    // installer is detached so we can't observe its exit code.  If it
+    // fails we do NOT want the next launch to retry indefinitely.
+    try { fs.unlinkSync(pendingPath); } catch (e) {
+      console.error('Failed to remove pending update flag file:', e);
     }
 
     try {
@@ -317,6 +371,8 @@ if (!app.requestSingleInstanceLock()) {
       child.unref();
     } catch (e) {
       console.error('Failed to start update installer:', e);
+      // The flag file is already deleted above, so the app will start
+      // normally on the next launch instead of looping.
       return false;
     }
 
