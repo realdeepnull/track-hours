@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-release -->
 
+## [0.8.0](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.7.6...track-hours-v0.8.0) (2026-08-26)
+
+
+### Features
+
+* **security:** integrate @electron/fuses to harden production binary ([c314e70](https://github.com/realdeepnull/track-hours/commit/c314e707f2f8e6d385e768bc7d01b686609eab8e))
+
 ## [0.7.6](https://github.com/realdeepnull/track-hours/compare/track-hours-v0.7.5...track-hours-v0.7.6) (2026-08-25)
 
 
